@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm --version)",
+      "Bash(command -v node)",
+      "Bash(compgen -b)"
+    ]
+  }
+}
