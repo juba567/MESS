@@ -105,6 +105,15 @@ body {
   color: #7c8798;
 }
 
+/* Native <select> popups render on an opaque OS surface (white on Windows/Chrome).
+   Our input text is near-white (ink-900) for the dark UI, so option text would be
+   invisible in the open dropdown — force readable dark-on-white for the list items. */
+select option,
+select optgroup {
+  color: #0f172a;
+  background-color: #ffffff;
+}
+
 /* Gradient primary button */
 .btn-gradient {
   background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
