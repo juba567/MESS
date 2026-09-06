@@ -31,6 +31,9 @@ import { settleKey } from './calc'
 import { supabase, hasSupabaseEnv } from './supabase'
 import { useUI } from './ui-store'
 import * as repo from './db/repo'
+import * as M from './db/mappers'
+import { startMessRealtime, stopMessRealtime, type RealtimeTable } from './realtime'
+import { showSystemNotification } from './notify'
 
 type Result = { ok: boolean; error?: string; id?: string; needsEmailConfirm?: boolean }
 
@@ -185,6 +188,68 @@ export const useStore = create<AppState>()(
         set((st) => ({ db: { ...st.db, notifications: [notification, ...st.db.notifications].slice(0, 300) } }))
       }
 
+      // Raise an "incoming" alert: in-app bell always, plus a toast when the app
+      // is on screen or an OS notification (via the PWA service worker) when it
+      // is backgrounded.
+      const pushIncoming = (messId: ID, kind: Notification['kind'], text: string) => {
+        notify({ messId, text, kind })
+        if (typeof document !== 'undefined' && document.visibilityState === 'visible') {
+          useUI.getState().toast(text, 'info')
+        } else {
+          void showSystemNotification(text)
+        }
+      }
+
+      // A realtime INSERT arrived for the active mess. Merge it into the local
+      // cache (live sync) and, when it isn't one of our own writes, announce it.
+      const handleRealtimeInsert = (table: RealtimeTable, row: Record<string, any>) => {
+        const messId = get().currentMessId
+        if (!messId || row.mess_id !== messId) return
+        const nameOf = (memberId?: string) =>
+          get().db.members.find((m) => m.id === memberId)?.name ?? 'Someone'
+        // Dedup: our own optimistic writes already carry this id locally, and
+        // Supabase echoes them back over the same channel.
+        const known = (arr: { id: ID }[]) => arr.some((x) => x.id === row.id)
+
+        switch (table) {
+          case 'bazars': {
+            if (known(get().db.bazars)) return
+            const bazar = M.fromBazarRow(row)
+            patchDb((db) => ({ bazars: [...db.bazars, bazar] }))
+            const total = bazar.items.reduce((sum, it) => sum + (it.price || 0), 0)
+            pushIncoming(messId, 'bazar', `${nameOf(bazar.buyerMemberId)} added a bazar — ৳${total.toLocaleString()}`)
+            break
+          }
+          case 'expenses': {
+            if (known(get().db.expenses)) return
+            const exp = M.fromExpenseRow(row)
+            patchDb((db) => ({ expenses: [...db.expenses, exp] }))
+            pushIncoming(messId, 'info', `${nameOf(exp.paidByMemberId)} added a ${exp.category} expense — ৳${exp.amount.toLocaleString()}`)
+            break
+          }
+          case 'payments': {
+            if (known(get().db.payments)) return
+            const pay = M.fromPaymentRow(row)
+            patchDb((db) => ({ payments: [...db.payments, pay] }))
+            pushIncoming(messId, 'info', `${nameOf(pay.memberId)} paid ৳${pay.amount.toLocaleString()}`)
+            break
+          }
+          case 'guest_meals': {
+            if (known(get().db.guestMeals)) return
+            const gm = M.fromGuestMealRow(row)
+            patchDb((db) => ({ guestMeals: [...db.guestMeals, gm] }))
+            pushIncoming(messId, 'meal', `${nameOf(gm.hostMemberId)} added a guest meal (${gm.guestName})`)
+            break
+          }
+          case 'meals': {
+            // High-frequency; live-sync only, no notification.
+            if (known(get().db.meals)) return
+            patchDb((db) => ({ meals: [...db.meals, M.fromMealRow(row)] }))
+            break
+          }
+        }
+      }
+
       const requireMess = () => {
         const { currentMessId } = get()
         if (!currentMessId) throw new Error('No active mess')
@@ -259,6 +324,8 @@ export const useStore = create<AppState>()(
               settlements: [...s.db.settlements.filter((m) => m.messId !== messId), ...data.settlements],
             },
           }))
+          // Live-sync: subscribe to teammates' inserts for this mess.
+          startMessRealtime(messId, handleRealtimeInsert)
         },
 
         // ---- AUTH ----
@@ -290,6 +357,7 @@ export const useStore = create<AppState>()(
         },
 
         async logout() {
+          stopMessRealtime()
           await supabase.auth.signOut()
           set({ currentUserId: null, currentMessId: null, db: EMPTY_DB })
         },
@@ -413,6 +481,7 @@ export const useStore = create<AppState>()(
         async switchMess(id) {
           set({ currentMessId: id })
           if (id) await get().loadMess(id)
+          else stopMessRealtime()
         },
 
         updateMess(patch) {
@@ -461,6 +530,7 @@ export const useStore = create<AppState>()(
           if (mess.ownerId !== userId) return { ok: false, error: 'Only the group owner can delete the mess.' }
           const { error } = await repo.deleteMess(id)
           if (error) return { ok: false, error }
+          if (get().currentMessId === id) stopMessRealtime()
           patchDb((db) => ({
             messes: db.messes.filter((m) => m.id !== id),
             members: db.members.filter((m) => m.messId !== id),
@@ -563,6 +633,7 @@ export const useStore = create<AppState>()(
           }
           const { error } = await repo.rpcLeaveMess(messId)
           if (error) return { ok: false, error }
+          stopMessRealtime()
           patchDb((db) => ({
             members: db.members.map((m) => (m.id === mem.id ? { ...m, active: false, leftAt: now() } : m)),
           }))

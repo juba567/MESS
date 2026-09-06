@@ -301,3 +301,22 @@ grant execute on function public.mess_role(text)     to authenticated;
 grant execute on function public.leave_mess(text)     to authenticated;
 grant execute on function public.create_mess(text,text,text,integer,text,date,text,text,jsonb) to authenticated;
 grant execute on function public.join_mess_by_code(text,text) to authenticated;
+
+-- ----------------------------- REALTIME -------------------------------------
+-- Publish INSERT/UPDATE/DELETE on the shared data tables so members receive
+-- live changes (see src/lib/realtime.ts). RLS still applies to realtime, so a
+-- client only receives rows for messes it belongs to. Idempotent: only adds a
+-- table if it isn't already in Supabase's default `supabase_realtime` publication.
+do $$
+declare t text;
+begin
+  foreach t in array array['bazars','expenses','payments','meals','guest_meals'] loop
+    if not exists (
+      select 1 from pg_publication_tables
+      where pubname = 'supabase_realtime' and schemaname = 'public' and tablename = t
+    ) then
+      execute format('alter publication supabase_realtime add table public.%I', t);
+    end if;
+  end loop;
+end $$;
+

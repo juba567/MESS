@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate, Outlet, useLocation, useSearchP
 import { Sparkles } from 'lucide-react'
 import { useStore } from '@/lib/store'
 import { supabase } from '@/lib/supabase'
+import { stopMessRealtime } from '@/lib/realtime'
 import { EMPTY_DB } from '@/lib/types'
 import { ToastHost, ConfirmHost } from '@/components/ui'
 import { AppShell, Aurora } from '@/components/layout/AppShell'
@@ -95,6 +96,7 @@ export function App() {
     // React to sign-out / token revocation from anywhere (other tabs, expiry).
     const { data } = supabase.auth.onAuthStateChange((event) => {
       if (event === 'SIGNED_OUT') {
+        stopMessRealtime()
         useStore.setState({ currentUserId: null, currentMessId: null, db: EMPTY_DB })
       }
     })

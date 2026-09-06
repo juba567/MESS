@@ -6,6 +6,12 @@ import { Card, SectionTitle, Field, Input, Button, Segmented, Stepper, Avatar } 
 import { useUser, useMess, useCan, useCurrentMember } from '@/hooks/useMess'
 import { useStore } from '@/lib/store'
 import { useUI } from '@/lib/ui-store'
+import {
+  notificationPermission,
+  requestNotificationPermission,
+  showSystemNotification,
+  type NotifPermission,
+} from '@/lib/notify'
 import { EXPENSE_CATEGORIES, type SplitMethod } from '@/lib/types'
 import { cn } from '@/lib/cn'
 
@@ -166,6 +172,7 @@ function NotifCard() {
     <Card className="p-5">
       <SectionTitle title="Notifications" subtitle="Choose what to be reminded about" icon={<Bell className="w-5 h-5" />} />
       <div className="space-y-1">
+        <DeviceNotifRow />
         {rows.map((r) => (
           <div key={r.key} className="flex items-center justify-between gap-3 py-2.5">
             <div>
@@ -177,6 +184,47 @@ function NotifCard() {
         ))}
       </div>
     </Card>
+  )
+}
+
+// OS-level notification permission (separate from the in-app preferences above).
+// Grants the app the right to raise system notifications — via the PWA service
+// worker — when a teammate adds something while the app is closed/backgrounded.
+function DeviceNotifRow() {
+  const toast = useUI((s) => s.toast)
+  const [perm, setPerm] = useState<NotifPermission>(() => notificationPermission())
+
+  const enable = async () => {
+    const p = await requestNotificationPermission()
+    setPerm(p)
+    if (p === 'granted') {
+      toast('Device notifications enabled')
+      void showSystemNotification("You're all set — new mess activity will show up here.")
+    } else if (p === 'denied') {
+      toast('Blocked — enable notifications in your browser settings', 'error')
+    }
+  }
+
+  const desc =
+    perm === 'granted' ? 'Alerts show even when the app is closed'
+    : perm === 'denied' ? 'Blocked — turn on notifications in browser settings'
+    : perm === 'unsupported' ? 'This browser doesn’t support notifications'
+    : 'Get alerts even when the app is closed'
+
+  return (
+    <div className="flex items-center justify-between gap-3 py-2.5 mb-1 border-b border-white/[0.06]">
+      <div>
+        <p className="font-medium text-ink-800">Device notifications</p>
+        <p className="text-sm text-ink-500">{desc}</p>
+      </div>
+      {perm === 'granted' ? (
+        <span className="text-sm font-semibold text-emerald-400 shrink-0">On</span>
+      ) : perm === 'default' ? (
+        <Button variant="secondary" onClick={enable}>Enable</Button>
+      ) : (
+        <span className="text-sm text-ink-400 shrink-0">{perm === 'denied' ? 'Blocked' : 'Unavailable'}</span>
+      )}
+    </div>
   )
 }
 
