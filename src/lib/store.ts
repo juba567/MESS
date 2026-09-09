@@ -88,7 +88,7 @@ interface AppState {
   leaveMess(): Promise<Result>
 
   // --- meals ---
-  setMeal(input: { memberId: ID; date: string; breakfast: number; lunch: number; dinner: number }): void
+  setMeal(input: { memberId: ID; date: string; lunch: number; dinner: number }): void
   addGuestMeal(input: { hostMemberId: ID; guestName: string; date: string; type: MealType; count: number }): Result
   deleteGuestMeal(id: ID): void
   setBooking(input: { memberId: ID; date: string; breakfast: boolean; lunch: boolean; dinner: boolean }): void
@@ -644,22 +644,23 @@ export const useStore = create<AppState>()(
         },
 
         // ---- MEALS ----
-        setMeal({ memberId, date, breakfast, lunch, dinner }) {
+        // Opt-out model: a meal row is an OVERRIDE (1 = eating, 0 = cancelled).
+        // Absence of a row means both lunch & dinner are on by default.
+        setMeal({ memberId, date, lunch, dinner }) {
           const messId = requireMess()
-          const clean = (n: number) => Math.max(0, Math.round(n))
+          const flag = (n: number) => (n > 0 ? 1 : 0)
           const existing = get().db.meals.find(
             (m) => m.messId === messId && m.memberId === memberId && m.date === date,
           )
           const row: Meal = existing
-            ? { ...existing, breakfast: clean(breakfast), lunch: clean(lunch), dinner: clean(dinner), updatedAt: now() }
+            ? { ...existing, lunch: flag(lunch), dinner: flag(dinner), updatedAt: now() }
             : {
                 id: uid('meal'),
                 messId,
                 memberId,
                 date,
-                breakfast: clean(breakfast),
-                lunch: clean(lunch),
-                dinner: clean(dinner),
+                lunch: flag(lunch),
+                dinner: flag(dinner),
                 updatedAt: now(),
               }
           patchDb((db) => ({

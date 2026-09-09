@@ -3,12 +3,13 @@ import type {
   Database,
   Expense,
   ID,
+  ISODate,
   Member,
   Mess,
   Month,
   SplitMethod,
 } from './types'
-import { daysInMonth } from './date'
+import { daysInMonth, eachDay, todayISO } from './date'
 import { round2 } from './format'
 
 export const FUND_ID = '__fund__'
@@ -47,6 +48,21 @@ export function effectiveSplit(mess: Mess, e: Expense): SplitMethod {
   return e.split ?? mess.settings.categorySplit[e.category] ?? 'equal'
 }
 
+/**
+ * Opt-out meal model: lunch + dinner are ON by default for every day a member
+ * belongs to the mess. `isMealDay` answers "could this member have a meal on
+ * this date" — i.e. the date is on/after the mess start and the member's join,
+ * and on/before their leave date. It does NOT cap at "today"; callers that
+ * compute billable totals additionally require `date <= today`, while the
+ * meal editor also shows future days so upcoming meals can be pre-cancelled.
+ */
+export function isMealDay(mess: Mess, member: Member, date: ISODate): boolean {
+  if (date < mess.startDate) return false
+  if (date < member.joinedAt.slice(0, 10)) return false
+  if (!member.active && member.leftAt && date > member.leftAt.slice(0, 10)) return false
+  return true
+}
+
 // ---------------------------------------------------------------------------
 // Monthly computation
 // ---------------------------------------------------------------------------
@@ -54,7 +70,6 @@ export function effectiveSplit(mess: Mess, e: Expense): SplitMethod {
 export interface MemberMonth {
   memberId: ID
   member: Member
-  breakfast: number
   lunch: number
   dinner: number
   ownMeals: number
@@ -74,7 +89,6 @@ export interface MonthSummary {
   memberCount: number
   activeMemberCount: number
   totalMeals: number
-  breakfast: number
   lunch: number
   dinner: number
   guestMeals: number
@@ -105,25 +119,52 @@ export function computeMonth(db: Database, messId: ID, month: Month): MonthSumma
   const expenses = inMonth(db.expenses)
   const payments = inMonth(db.payments)
 
-  // --- meal totals ---
-  let breakfast = 0
-  let lunch = 0
-  let dinner = 0
+  // --- meal totals (opt-out model) ---
+  // A stored meal row is an OVERRIDE for that member/day: lunch/dinner 1 = eating,
+  // 0 = cancelled. With no row, both default ON for every day the member belongs
+  // to the mess. Only elapsed days (through today) are billable.
+  const today = todayISO()
+  const monthEnd = `${month}-${String(daysInMonth(month)).padStart(2, '0')}`
+  const countableEnd = today < monthEnd ? today : monthEnd
+  const monthDays = eachDay(month)
+
+  const overrideOf = new Map<string, { lunch: number; dinner: number }>()
   for (const m of meals) {
     if (!memberIds.has(m.memberId)) continue
-    breakfast += m.breakfast
-    lunch += m.lunch
-    dinner += m.dinner
+    overrideOf.set(`${m.memberId}|${m.date}`, {
+      lunch: m.lunch > 0 ? 1 : 0,
+      dinner: m.dinner > 0 ? 1 : 0,
+    })
   }
+
+  // Per-member OWN effective lunch/dinner over billable days.
+  const ownOf = new Map<ID, { lunch: number; dinner: number }>()
+  let lunch = 0
+  let dinner = 0
+  for (const mem of members) {
+    let ml = 0
+    let md = 0
+    for (const date of monthDays) {
+      if (date > countableEnd) break // ascending — nothing billable beyond today
+      if (!isMealDay(mess, mem, date)) continue
+      const ov = overrideOf.get(`${mem.id}|${date}`)
+      ml += ov ? ov.lunch : 1
+      md += ov ? ov.dinner : 1
+    }
+    ownOf.set(mem.id, { lunch: ml, dinner: md })
+    lunch += ml
+    dinner += md
+  }
+
+  // Guest meals are explicit records charged to a host (breakfast folded into lunch).
   let guestMeals = 0
   for (const g of guests) {
     if (!memberIds.has(g.hostMemberId)) continue
     guestMeals += g.count
-    if (g.type === 'breakfast') breakfast += g.count
-    else if (g.type === 'lunch') lunch += g.count
-    else dinner += g.count
+    if (g.type === 'dinner') dinner += g.count
+    else lunch += g.count
   }
-  const totalMeals = breakfast + lunch + dinner
+  const totalMeals = lunch + dinner
 
   // --- cost basis ---
   const totalBazar = bazars.reduce((s, b) => s + bazarTotal(b), 0)
@@ -140,21 +181,14 @@ export function computeMonth(db: Database, messId: ID, month: Month): MonthSumma
 
   // --- per-member ---
   const memberMonths: MemberMonth[] = members.map((mem) => {
-    let b = 0
-    let l = 0
-    let d = 0
-    for (const m of meals) {
-      if (m.memberId === mem.id) {
-        b += m.breakfast
-        l += m.lunch
-        d += m.dinner
-      }
-    }
+    const own = ownOf.get(mem.id) ?? { lunch: 0, dinner: 0 }
+    const l = own.lunch
+    const d = own.dinner
     let gCount = 0
     for (const g of guests) {
       if (g.hostMemberId === mem.id) gCount += g.count
     }
-    const ownMeals = b + l + d
+    const ownMeals = l + d
     const memberMeals = ownMeals + gCount
     const mealCost = memberMeals * mealRate
 
@@ -180,7 +214,6 @@ export function computeMonth(db: Database, messId: ID, month: Month): MonthSumma
     return {
       memberId: mem.id,
       member: mem,
-      breakfast: b,
       lunch: l,
       dinner: d,
       ownMeals,
@@ -205,7 +238,6 @@ export function computeMonth(db: Database, messId: ID, month: Month): MonthSumma
     memberCount: members.length,
     activeMemberCount: members.filter((m) => m.active).length,
     totalMeals,
-    breakfast,
     lunch,
     dinner,
     guestMeals,

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Copy, Check, Link2, QrCode, Trash2, Plus, UtensilsCrossed, ShoppingCart, Receipt, Wallet, Users2, Palmtree } from 'lucide-react'
+import { Copy, Check, Link2, QrCode, Trash2, Plus, UtensilsCrossed, ShoppingCart, Receipt, Wallet, Users2, Palmtree, Sunset, Moon } from 'lucide-react'
 import { useStore } from '@/lib/store'
 import { useUI } from '@/lib/ui-store'
 import { useActiveMembers, useCurrentMember, useMess, useCan } from '@/hooks/useMess'
@@ -45,9 +45,8 @@ function AddMealModal({ open, onClose }: { open: boolean; onClose: () => void })
 
   const [memberId, setMemberId] = useState(defaultId)
   const [date, setDate] = useState(todayISO())
-  const [b, setB] = useState(0)
-  const [l, setL] = useState(0)
-  const [d, setD] = useState(0)
+  const [l, setL] = useState(1)
+  const [d, setD] = useState(1)
 
   useEffect(() => {
     if (!open) return
@@ -57,17 +56,17 @@ function AddMealModal({ open, onClose }: { open: boolean; onClose: () => void })
   }, [open, defaultId])
 
   useEffect(() => {
+    // Opt-out model: lunch & dinner default ON; a stored row may cancel a slot.
     const existing = meals.find((m) => m.messId === messId && m.memberId === memberId && m.date === date)
-    setB(existing?.breakfast ?? 0)
-    setL(existing?.lunch ?? 0)
-    setD(existing?.dinner ?? 0)
+    setL(existing ? (existing.lunch > 0 ? 1 : 0) : 1)
+    setD(existing ? (existing.dinner > 0 ? 1 : 0) : 1)
   }, [memberId, date, meals, messId, open])
 
-  const total = b + l + d
+  const total = l + d
   const submit = () => {
     if (!memberId) return
-    setMeal({ memberId, date, breakfast: b, lunch: l, dinner: d })
-    toast('Meal saved')
+    setMeal({ memberId, date, lunch: l, dinner: d })
+    toast(total === 0 ? 'Meals cancelled' : 'Meal saved')
     onClose()
   }
 
@@ -75,12 +74,13 @@ function AddMealModal({ open, onClose }: { open: boolean; onClose: () => void })
     <Modal
       open={open}
       onClose={onClose}
-      title="Add / edit meal"
+      title="Meal on / off"
+      description="Lunch & dinner count automatically"
       icon={<UtensilsCrossed className="w-5 h-5" />}
       footer={
         <>
           <Button variant="ghost" onClick={onClose}>Cancel</Button>
-          <Button onClick={submit}>Save meal · {total}</Button>
+          <Button onClick={submit}>Save · {total}</Button>
         </>
       }
     >
@@ -94,18 +94,20 @@ function AddMealModal({ open, onClose }: { open: boolean; onClose: () => void })
           </Field>
         </div>
         {[
-          { label: 'Breakfast', v: b, set: setB },
-          { label: 'Lunch', v: l, set: setL },
-          { label: 'Dinner', v: d, set: setD },
+          { label: 'Lunch', v: l, set: setL, icon: <Sunset className="w-4 h-4 text-sky-500" /> },
+          { label: 'Dinner', v: d, set: setD, icon: <Moon className="w-4 h-4 text-violet-500" /> },
         ].map((row) => (
           <div key={row.label} className="flex items-center justify-between glass-panel rounded-2xl px-4 py-3">
-            <span className="font-semibold text-ink-700">{row.label}</span>
-            <Stepper value={row.v} onChange={row.set} max={20} />
+            <span className="font-semibold text-ink-700 flex items-center gap-2">{row.icon}{row.label}</span>
+            <Segmented
+              value={row.v > 0 ? 'on' : 'off'}
+              onChange={(v) => row.set(v === 'on' ? 1 : 0)}
+              size="sm"
+              options={[{ value: 'on', label: 'On' }, { value: 'off', label: 'Off' }]}
+            />
           </div>
         ))}
-        <p className="text-center text-sm text-ink-500">
-          Total meals: <span className="font-bold text-brand-300">{total}</span>
-        </p>
+        <p className="text-center text-xs text-ink-400">On by default — switch off to cancel (“meal off”).</p>
       </div>
     </Modal>
   )
@@ -431,7 +433,6 @@ function AddGuestModal({ open, onClose }: { open: boolean; onClose: () => void }
             value={type}
             onChange={setType}
             options={[
-              { value: 'breakfast', label: 'Breakfast' },
               { value: 'lunch', label: 'Lunch' },
               { value: 'dinner', label: 'Dinner' },
             ]}

@@ -3,7 +3,9 @@
     "allow": [
       "Bash(npm --version)",
       "Bash(command -v node)",
-      "Bash(compgen -b)"
+      "Bash(compgen -b)",
+      "Bash(git add *)",
+      "Bash(git commit *)"
     ]
   }
 }

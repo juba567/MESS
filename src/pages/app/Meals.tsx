@@ -1,11 +1,12 @@
 import { useEffect, useMemo, useState } from 'react'
-import { UtensilsCrossed, Users2, Trash2, Plus, Coins, Sun, Sunset, Moon } from 'lucide-react'
+import { UtensilsCrossed, Users2, Trash2, Plus, Coins, Sunset, Moon } from 'lucide-react'
 import { PageHeader } from '@/components/common/PageHeader'
 import { MonthNav } from '@/components/common/MonthNav'
-import { Card, Stat, Avatar, Button, Modal, Stepper, Badge, EmptyState, Chip } from '@/components/ui'
+import { Card, Stat, Avatar, Button, Modal, Segmented, Badge, EmptyState } from '@/components/ui'
 import { useMonthState, useMonthSummary } from '@/hooks/useMonth'
-import { useCurrentMember, useActiveMembers, useCan } from '@/hooks/useMess'
+import { useCurrentMember, useActiveMembers, useCan, useMess } from '@/hooks/useMess'
 import { useStore } from '@/lib/store'
+import { isMealDay } from '@/lib/calc'
 import { useUI } from '@/lib/ui-store'
 import { taka } from '@/lib/format'
 import { eachDay, firstWeekday, DAY_SHORT, shortDate, longDate, monthLabel, todayISO } from '@/lib/date'
@@ -16,6 +17,7 @@ export function Meals() {
   const me = useCurrentMember()
   const can = useCan()
   const members = useActiveMembers()
+  const mess = useMess()
   const { month, prev, next, isCurrent } = useMonthState()
   const summary = useMonthSummary(month)
   const setMeal = useStore((s) => s.setMeal)
@@ -32,12 +34,22 @@ export function Meals() {
   const [editDate, setEditDate] = useState<string | null>(null)
 
   const memberMeals = useMemo(() => {
-    const map: Record<string, { b: number; l: number; d: number }> = {}
+    // Effective per-day state for the selected member under the opt-out model:
+    // lunch & dinner default ON for every day they belong to the mess, unless a
+    // stored row cancels one. Days outside their membership are omitted.
+    const map: Record<string, { l: number; d: number }> = {}
+    const selMember = members.find((m) => m.id === selId)
+    if (!selMember || !mess) return map
+    const ov: Record<string, { l: number; d: number }> = {}
     mealsAll
       .filter((m) => m.messId === messId && m.memberId === selId && m.date.slice(0, 7) === month)
-      .forEach((m) => (map[m.date] = { b: m.breakfast, l: m.lunch, d: m.dinner }))
+      .forEach((m) => (ov[m.date] = { l: m.lunch > 0 ? 1 : 0, d: m.dinner > 0 ? 1 : 0 }))
+    for (const date of eachDay(month)) {
+      if (!isMealDay(mess, selMember, date)) continue
+      map[date] = ov[date] ?? { l: 1, d: 1 }
+    }
     return map
-  }, [mealsAll, messId, selId, month])
+  }, [mealsAll, messId, selId, month, members, mess])
 
   const guests = useMemo(
     () => guestsAll.filter((g) => g.messId === messId && g.date.slice(0, 7) === month).sort((a, b) => b.date.localeCompare(a.date)),
@@ -60,9 +72,9 @@ export function Meals() {
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <Stat label="Total Meals" value={summary.totalMeals} icon={<UtensilsCrossed className="w-5 h-5" />} tone="brand" />
-        <Stat label="Breakfast" value={summary.breakfast} icon={<Sun className="w-5 h-5" />} tone="amber" />
         <Stat label="Lunch" value={summary.lunch} icon={<Sunset className="w-5 h-5" />} tone="sky" />
-        <Stat label="Dinner / Meal Rate" value={summary.dinner} sub={`Rate ${taka(summary.mealRate, { decimals: 2 })}`} icon={<Moon className="w-5 h-5" />} tone="violet" />
+        <Stat label="Dinner" value={summary.dinner} icon={<Moon className="w-5 h-5" />} tone="violet" />
+        <Stat label="Meal Rate" value={taka(summary.mealRate, { decimals: 2 })} sub="per meal" icon={<Coins className="w-5 h-5" />} tone="amber" />
       </div>
 
       {/* Member selector + calendar */}
@@ -93,34 +105,48 @@ export function Meals() {
           {Array.from({ length: blanks }).map((_, i) => <div key={`b${i}`} />)}
           {days.map((date) => {
             const mm = memberMeals[date]
-            const total = mm ? mm.b + mm.l + mm.d : 0
             const isToday = date === today
             const isFuture = date > today
+            if (!mm) {
+              // Selected member wasn't part of the mess on this day.
+              return (
+                <div key={date} className="aspect-square rounded-2xl border border-white/[0.05] bg-white/[0.02] flex items-center justify-center opacity-30">
+                  <span className="text-xs font-semibold text-ink-500">{parseInt(date.slice(-2))}</span>
+                </div>
+              )
+            }
+            const total = mm.l + mm.d
+            const off = total === 0
             return (
               <button
                 key={date}
                 onClick={() => setEditDate(date)}
                 className={cn(
                   'aspect-square rounded-2xl border flex flex-col items-center justify-center transition relative',
-                  total > 0 ? 'bg-gradient-to-br from-brand-500/15 to-violet-500/10 border-brand-300/60' : 'bg-white/[0.05] border-white/[0.10] hover:bg-white/[0.09]',
+                  off
+                    ? 'bg-rose-500/10 border-rose-400/40 hover:bg-rose-500/15'
+                    : total === 2
+                      ? 'bg-gradient-to-br from-brand-500/15 to-violet-500/10 border-brand-300/60'
+                      : 'bg-amber-500/10 border-amber-400/40',
                   isToday && 'ring-2 ring-brand-500/60',
                   isFuture && 'opacity-70',
                 )}
               >
-                <span className={cn('text-xs font-semibold', total > 0 ? 'text-brand-300' : 'text-ink-500')}>{parseInt(date.slice(-2))}</span>
-                {total > 0 && <span className="font-display font-extrabold text-ink-900 text-sm leading-none mt-0.5">{total}</span>}
-                {mm && (
-                  <span className="flex gap-0.5 mt-1">
-                    {mm.b > 0 && <Dot />}
-                    {mm.l > 0 && <Dot />}
-                    {mm.d > 0 && <Dot />}
-                  </span>
+                <span className={cn('text-xs font-semibold', off ? 'text-rose-300' : 'text-brand-300')}>{parseInt(date.slice(-2))}</span>
+                {off ? (
+                  <span className="text-[9px] font-bold uppercase tracking-wide text-rose-300 leading-none mt-0.5">off</span>
+                ) : (
+                  <span className="font-display font-extrabold text-ink-900 text-sm leading-none mt-0.5">{total}</span>
                 )}
+                <span className="flex gap-0.5 mt-1 h-1">
+                  {mm.l > 0 && <Dot tone="sky" />}
+                  {mm.d > 0 && <Dot tone="violet" />}
+                </span>
               </button>
             )
           })}
         </div>
-        <p className="text-xs text-ink-400 mt-3">Tap any day to set {selMember?.id === me?.id ? 'your' : `${selMember?.name?.split(' ')[0]}’s`} breakfast, lunch and dinner.</p>
+        <p className="text-xs text-ink-400 mt-3">Lunch &amp; dinner count automatically. Tap any day to cancel {selMember?.id === me?.id ? 'your' : `${selMember?.name?.split(' ')[0]}’s`} meals — cancelled days show <span className="text-rose-300 font-semibold">off</span>.</p>
       </Card>
 
       {/* Monthly per-member table */}
@@ -134,7 +160,6 @@ export function Meals() {
             <thead>
               <tr className="text-left text-ink-500 border-y border-white/[0.10]">
                 <th className="font-semibold px-5 py-2.5">Member</th>
-                <th className="font-semibold px-3 py-2.5 text-center">B</th>
                 <th className="font-semibold px-3 py-2.5 text-center">L</th>
                 <th className="font-semibold px-3 py-2.5 text-center">D</th>
                 <th className="font-semibold px-3 py-2.5 text-center">Guest</th>
@@ -152,7 +177,6 @@ export function Meals() {
                       {!m.member.active && <Badge tone="slate">left</Badge>}
                     </div>
                   </td>
-                  <td className="px-3 py-3 text-center tabular-nums text-ink-600">{m.breakfast}</td>
                   <td className="px-3 py-3 text-center tabular-nums text-ink-600">{m.lunch}</td>
                   <td className="px-3 py-3 text-center tabular-nums text-ink-600">{m.dinner}</td>
                   <td className="px-3 py-3 text-center tabular-nums text-ink-600">{m.guestMeals || '—'}</td>
@@ -204,8 +228,8 @@ export function Meals() {
         memberName={selMember?.id === me?.id ? 'You' : selMember?.name ?? ''}
         initial={editDate ? memberMeals[editDate] : undefined}
         onClose={() => setEditDate(null)}
-        onSave={(b, l, d) => {
-          if (editDate) setMeal({ memberId: selId, date: editDate, breakfast: b, lunch: l, dinner: d })
+        onSave={(l, d) => {
+          if (editDate) setMeal({ memberId: selId, date: editDate, lunch: l, dinner: d })
           setEditDate(null)
         }}
       />
@@ -213,8 +237,9 @@ export function Meals() {
   )
 }
 
-function Dot() {
-  return <span className="w-1 h-1 rounded-full bg-brand-500" />
+function Dot({ tone = 'brand' }: { tone?: 'brand' | 'sky' | 'violet' }) {
+  const c = tone === 'sky' ? 'bg-sky-400' : tone === 'violet' ? 'bg-violet-400' : 'bg-brand-500'
+  return <span className={cn('w-1 h-1 rounded-full', c)} />
 }
 
 function DayEditor({
@@ -222,25 +247,22 @@ function DayEditor({
 }: {
   date: string | null
   memberName: string
-  initial?: { b: number; l: number; d: number }
+  initial?: { l: number; d: number }
   onClose: () => void
-  onSave: (b: number, l: number, d: number) => void
+  onSave: (l: number, d: number) => void
 }) {
-  const [b, setB] = useState(0)
-  const [l, setL] = useState(0)
-  const [d, setD] = useState(0)
+  const [l, setL] = useState(1)
+  const [d, setD] = useState(1)
 
-  // reset steppers whenever a different day is opened
+  // Default to ON (opt-out) whenever a new day opens; reflect any stored cancellation.
   useEffect(() => {
-    setB(initial?.b ?? 0)
-    setL(initial?.l ?? 0)
-    setD(initial?.d ?? 0)
+    setL(initial?.l ?? 1)
+    setD(initial?.d ?? 1)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [date])
 
-  const total = b + l + d
+  const total = l + d
   const rows = [
-    { label: 'Breakfast', icon: <Sun className="w-4 h-4 text-amber-500" />, v: b, set: setB },
     { label: 'Lunch', icon: <Sunset className="w-4 h-4 text-sky-500" />, v: l, set: setL },
     { label: 'Dinner', icon: <Moon className="w-4 h-4 text-violet-500" />, v: d, set: setD },
   ]
@@ -255,7 +277,7 @@ function DayEditor({
       footer={
         <>
           <Button variant="ghost" onClick={onClose}>Cancel</Button>
-          <Button onClick={() => onSave(b, l, d)} icon={<Coins className="w-4 h-4" />}>Save · {total}</Button>
+          <Button onClick={() => onSave(l, d)} icon={<Coins className="w-4 h-4" />}>Save · {total}</Button>
         </>
       }
     >
@@ -263,9 +285,15 @@ function DayEditor({
         {rows.map((r) => (
           <div key={r.label} className="flex items-center justify-between glass-panel rounded-2xl px-4 py-3">
             <span className="font-semibold text-ink-700 flex items-center gap-2">{r.icon}{r.label}</span>
-            <Stepper value={r.v} onChange={r.set} max={20} />
+            <Segmented
+              value={r.v > 0 ? 'on' : 'off'}
+              onChange={(v) => r.set(v === 'on' ? 1 : 0)}
+              size="sm"
+              options={[{ value: 'on', label: 'On' }, { value: 'off', label: 'Off' }]}
+            />
           </div>
         ))}
+        <p className="text-center text-xs text-ink-400">Meals are on by default — switch off to cancel.</p>
       </div>
     </Modal>
   )

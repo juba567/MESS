@@ -108,7 +108,7 @@ export function buildSeed(): Database {
       const l = rnd() < 0.92 ? (rnd() < 0.08 ? 2 : 1) : 0
       const dn = rnd() < 0.9 ? (rnd() < 0.06 ? 2 : 1) : 0
       if (b + l + dn === 0) continue
-      meals.push({ id: uid('meal'), messId, memberId: m.id, date, breakfast: b, lunch: l, dinner: dn, updatedAt: ts })
+      meals.push({ id: uid('meal'), messId, memberId: m.id, date, lunch: l, dinner: dn, updatedAt: ts })
     }
   }
   db.meals = meals

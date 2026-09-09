@@ -103,7 +103,7 @@ export interface Meal {
   messId: ID
   memberId: ID
   date: ISODate
-  breakfast: number
+  /** opt-out flags: 1 = eating, 0 = cancelled ("meal off"). No row = both on. */
   lunch: number
   dinner: number
   updatedAt: ISODateTime

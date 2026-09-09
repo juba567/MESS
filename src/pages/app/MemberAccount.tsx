@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { ArrowLeft, Crown, Shield, UtensilsCrossed, Wallet, Receipt, Coins, Sun, Sunset, Moon, Users2, Palmtree } from 'lucide-react'
+import { ArrowLeft, Crown, Shield, UtensilsCrossed, Wallet, Receipt, Coins, Sunset, Moon, Users2, Palmtree } from 'lucide-react'
 import { MonthNav } from '@/components/common/MonthNav'
 import { Card, Avatar, Badge, Button, Stat, EmptyState } from '@/components/ui'
 import { useMonthState, useMonthSummary } from '@/hooks/useMonth'
@@ -104,9 +104,8 @@ export function MemberAccount() {
       {/* Meal breakdown */}
       <Card className="p-5">
         <h3 className="font-display font-bold text-ink-900 mb-4">Meal breakdown</h3>
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-2 gap-3">
           {[
-            { label: 'Breakfast', v: mm?.breakfast ?? 0, icon: <Sun className="w-4 h-4" />, tone: 'from-amber-400 to-orange-500' },
             { label: 'Lunch', v: mm?.lunch ?? 0, icon: <Sunset className="w-4 h-4" />, tone: 'from-sky-500 to-cyan-500' },
             { label: 'Dinner', v: mm?.dinner ?? 0, icon: <Moon className="w-4 h-4" />, tone: 'from-violet-500 to-fuchsia-500' },
           ].map((r) => (

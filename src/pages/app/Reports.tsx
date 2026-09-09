@@ -34,10 +34,10 @@ export function Reports() {
     const rows: (string | number)[][] = [
       [`Mess Report — ${mess?.name ?? ''}`, monthLabel(month)],
       [],
-      ['Member', 'Breakfast', 'Lunch', 'Dinner', 'Guest', 'Total Meals', 'Meal Cost', 'Other Cost', 'Total Cost', 'Paid', 'Balance', 'Status'],
-      ...summary.members.map((m) => [m.member.name, m.breakfast, m.lunch, m.dinner, m.guestMeals, m.meals, m.mealCost, m.otherCost, m.totalCost, m.paid, m.balance, m.status]),
+      ['Member', 'Lunch', 'Dinner', 'Guest', 'Total Meals', 'Meal Cost', 'Other Cost', 'Total Cost', 'Paid', 'Balance', 'Status'],
+      ...summary.members.map((m) => [m.member.name, m.lunch, m.dinner, m.guestMeals, m.meals, m.mealCost, m.otherCost, m.totalCost, m.paid, m.balance, m.status]),
       [],
-      ['Totals', '', '', '', summary.guestMeals, summary.totalMeals, '', '', summary.totalCost, summary.totalCollected, '', ''],
+      ['Totals', '', '', summary.guestMeals, summary.totalMeals, '', '', summary.totalCost, summary.totalCollected, '', ''],
       [],
       ['Meal rate', summary.mealRate],
       ['Total bazar', summary.totalBazar],
