@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Wallet, Plus, Search, Trash2, Pencil, PiggyBank, TrendingDown } from 'lucide-react'
+import { Wallet, Plus, Search, Trash2, Pencil, PiggyBank, Coins } from 'lucide-react'
 import { PageHeader } from '@/components/common/PageHeader'
 import { MonthNav } from '@/components/common/MonthNav'
 import { useMonthState, useMonthSummary } from '@/hooks/useMonth'
@@ -44,6 +44,7 @@ export function Payments() {
   }, [monthPayments, method, query])
 
   const total = monthPayments.reduce((s, p) => s + p.amount, 0)
+  const fundLeft = total - (summary?.totalCost ?? 0)
 
   return (
     <div className="space-y-6">
@@ -55,7 +56,7 @@ export function Payments() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <Stat label="Collected" value={taka(total)} icon={<PiggyBank className="w-5 h-5" />} tone="green" />
         <Stat label="Total cost" value={taka(summary?.totalCost ?? 0)} icon={<Wallet className="w-5 h-5" />} tone="brand" />
-        <Stat label="Outstanding due" value={taka(summary?.totalDue ?? 0)} icon={<TrendingDown className="w-5 h-5" />} tone="rose" />
+        <Stat label="Money in Fund" value={taka(fundLeft)} sub={fundLeft >= 0 ? 'in hand' : 'short of cost'} icon={<Coins className="w-5 h-5" />} tone={fundLeft >= 0 ? 'green' : 'rose'} />
         <Stat label="Payments" value={monthPayments.length} icon={<Wallet className="w-5 h-5" />} tone="sky" />
       </div>
 

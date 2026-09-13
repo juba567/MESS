@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import {
   Users, UserCheck, UtensilsCrossed, ShoppingCart, Receipt, Wallet, Coins,
-  TrendingUp, TrendingDown, Plus, Palmtree, FileBarChart, ArrowRight, Users2, PiggyBank,
+  Plus, Palmtree, FileBarChart, ArrowRight, Users2, PiggyBank,
 } from 'lucide-react'
 import { PageHeader } from '@/components/common/PageHeader'
 import { MonthNav } from '@/components/common/MonthNav'
@@ -39,6 +39,7 @@ export function Dashboard() {
 
   if (!summary || !mess) return null
   const mine = summary.members.find((m) => m.memberId === me?.id)
+  const fundLeft = summary.totalCollected - summary.totalCost
 
   const statusTone = mine?.status === 'due' ? 'rose' : mine?.status === 'receivable' ? 'green' : 'slate'
   const statusText = mine?.status === 'due' ? 'You owe' : mine?.status === 'receivable' ? 'You’ll receive' : 'All settled'
@@ -110,8 +111,7 @@ export function Dashboard() {
         <Stat label="Other Expenses" value={taka(summary.otherExpenses)} sub="split equally" icon={<Receipt className="w-5 h-5" />} tone="amber" />
         <Stat label="Total Cost" value={taka(summary.totalCost)} sub={`${monthLabel(month)}`} icon={<Coins className="w-5 h-5" />} tone="violet" />
         <Stat label="Money Collected" value={taka(summary.totalCollected)} icon={<Wallet className="w-5 h-5" />} tone="sky" />
-        <Stat label="Total Due" value={taka(summary.totalDue)} sub="members owe" icon={<TrendingDown className="w-5 h-5" />} tone="rose" />
-        <Stat label="Receivable" value={taka(summary.totalReceivable)} sub="members overpaid" icon={<TrendingUp className="w-5 h-5" />} tone="green" />
+        <Stat label="Money in Fund" value={taka(fundLeft)} sub={fundLeft >= 0 ? 'in hand' : 'short of cost'} icon={<PiggyBank className="w-5 h-5" />} tone={fundLeft >= 0 ? 'green' : 'rose'} />
       </div>
 
       {/* Members balances + activity */}
