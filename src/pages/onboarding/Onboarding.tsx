@@ -76,7 +76,7 @@ export function Onboarding() {
         className="w-full max-w-lg"
       >
         <div className="flex items-center gap-3 mb-6 justify-center">
-          <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-brand-500 to-violet-500 grid place-items-center text-white shadow-glow">
+          <div className="w-11 h-11 rounded-2xl grad-brand grid place-items-center text-white shadow-glow">
             <Sparkles className="w-6 h-6" />
           </div>
           <span className="font-display font-extrabold text-xl text-ink-900">Mess Manager</span>
@@ -140,7 +140,7 @@ export function Onboarding() {
           )}
 
           {myMesses.length > 0 && (
-            <div className="mt-6 pt-5 border-t border-white/[0.10]">
+            <div className="mt-6 pt-5 border-t border-line/[0.10]">
               <p className="text-xs font-semibold uppercase tracking-wide text-ink-400 mb-2">Your messes</p>
               <div className="space-y-2">
                 {myMesses.map((m) => (
@@ -152,7 +152,7 @@ export function Onboarding() {
                     }}
                     className="w-full glass rounded-2xl px-3 py-2.5 flex items-center gap-3 hover:shadow-glass transition text-left"
                   >
-                    <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-500 to-violet-500 grid place-items-center text-white font-bold">
+                    <div className="w-9 h-9 rounded-xl grad-brand grid place-items-center text-white font-bold">
                       {m.name[0]}
                     </div>
                     <span className="flex-1 font-semibold text-ink-800 truncate">{m.name}</span>

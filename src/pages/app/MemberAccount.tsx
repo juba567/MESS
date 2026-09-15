@@ -120,7 +120,7 @@ export function MemberAccount() {
 
       {/* Payment history */}
       <Card className="p-5">
-        <h3 className="font-display font-bold text-ink-900 mb-4 flex items-center gap-2"><Wallet className="w-4 h-4 text-brand-400" /> Payments this month</h3>
+        <h3 className="font-display font-bold text-ink-900 mb-4 flex items-center gap-2"><Wallet className="w-4 h-4 text-brand-600 dark:text-brand-400" /> Payments this month</h3>
         {payments.length === 0 ? (
           <EmptyState icon={<Wallet className="w-7 h-7" />} title="No payments" message="No deposits recorded for this month." />
         ) : (
@@ -132,7 +132,7 @@ export function MemberAccount() {
                   <p className="font-semibold text-ink-800 text-sm">{p.method}</p>
                   <p className="text-xs text-ink-500">{shortDate(p.date)}{p.note ? ` · ${p.note}` : ''}</p>
                 </div>
-                <span className="font-bold text-emerald-400">{taka(p.amount)}</span>
+                <span className="font-bold text-emerald-700 dark:text-emerald-400">{taka(p.amount)}</span>
               </div>
             ))}
           </div>
@@ -142,7 +142,7 @@ export function MemberAccount() {
       {/* Leaves */}
       {leaves.length > 0 && (
         <Card className="p-5">
-          <h3 className="font-display font-bold text-ink-900 mb-4 flex items-center gap-2"><Palmtree className="w-4 h-4 text-brand-400" /> Leave history</h3>
+          <h3 className="font-display font-bold text-ink-900 mb-4 flex items-center gap-2"><Palmtree className="w-4 h-4 text-brand-600 dark:text-brand-400" /> Leave history</h3>
           <div className="space-y-2">
             {leaves.map((l) => (
               <div key={l.id} className="flex items-center gap-3 glass-panel rounded-2xl px-3 py-2.5">

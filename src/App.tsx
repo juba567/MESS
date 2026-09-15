@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { BrowserRouter, Routes, Route, Navigate, Outlet, useLocation, useSearchParams } from 'react-router-dom'
 import { Sparkles } from 'lucide-react'
 import { useStore } from '@/lib/store'
+import { useUI } from '@/lib/ui-store'
 import { supabase } from '@/lib/supabase'
 import { stopMessRealtime } from '@/lib/realtime'
 import { EMPTY_DB } from '@/lib/types'
@@ -74,10 +75,10 @@ function Splash() {
     <div className="min-h-screen grid place-items-center">
       <Aurora />
       <div className="flex flex-col items-center gap-4">
-        <div className="w-14 h-14 rounded-3xl bg-gradient-to-br from-brand-500 to-violet-500 grid place-items-center text-white shadow-glow animate-pulse">
+        <div className="w-14 h-14 rounded-3xl grad-brand grid place-items-center text-white shadow-glow animate-pulse">
           <Sparkles className="w-7 h-7" />
         </div>
-        <div className="relative h-1.5 w-28 rounded-full bg-white/[0.06] overflow-hidden">
+        <div className="relative h-1.5 w-28 rounded-full bg-overlay/[0.06] overflow-hidden">
           <div className="absolute inset-y-0 -left-full w-full bg-gradient-to-r from-transparent via-brand-500 to-transparent animate-shimmer" />
         </div>
       </div>
@@ -89,6 +90,15 @@ function Splash() {
 
 export function App() {
   const hydrated = useStore((s) => s.hydrated)
+  const theme = useUI((s) => s.theme)
+
+  // Keep <html data-theme> and the browser chrome color in sync with the store.
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme
+    document
+      .querySelector('meta[name="theme-color"]')
+      ?.setAttribute('content', theme === 'dark' ? '#0a0c13' : '#f5ebe6')
+  }, [theme])
 
   useEffect(() => {
     // Load the current Supabase session (if any) → profile → active mess.

@@ -53,7 +53,7 @@ export function BottomNav() {
               className={({ isActive }) =>
                 cn(
                   'flex flex-col items-center justify-center gap-1 rounded-2xl text-[11px] font-semibold transition',
-                  isActive ? 'text-brand-300' : 'text-ink-400',
+                  isActive ? 'text-brand-700 dark:text-brand-300' : 'text-ink-400',
                 )
               }
             >
@@ -113,7 +113,7 @@ export function BottomNav() {
               }}
               className="glass rounded-2xl py-4 flex flex-col items-center gap-2 hover:shadow-glass transition active:scale-95"
             >
-              <item.icon className="w-6 h-6 text-brand-400" />
+              <item.icon className="w-6 h-6 text-brand-600 dark:text-brand-400" />
               <span className="text-xs font-semibold text-ink-700">{item.label}</span>
             </button>
           ))}

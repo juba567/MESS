@@ -20,7 +20,7 @@ export function MonthNav({
     <div className={cn('inline-flex items-center glass rounded-2xl p-1 shadow-glass-sm', className)}>
       <button
         onClick={onPrev}
-        className="w-9 h-9 grid place-items-center rounded-xl text-ink-600 hover:bg-white/[0.09] transition"
+        className="w-9 h-9 grid place-items-center rounded-xl text-ink-600 hover:bg-overlay/[0.09] transition"
         aria-label="Previous month"
       >
         <ChevronLeft className="w-5 h-5" />
@@ -31,7 +31,7 @@ export function MonthNav({
       <button
         onClick={onNext}
         disabled={!canNext}
-        className="w-9 h-9 grid place-items-center rounded-xl text-ink-600 hover:bg-white/[0.09] transition disabled:opacity-30 disabled:pointer-events-none"
+        className="w-9 h-9 grid place-items-center rounded-xl text-ink-600 hover:bg-overlay/[0.09] transition disabled:opacity-30 disabled:pointer-events-none"
         aria-label="Next month"
       >
         <ChevronRight className="w-5 h-5" />

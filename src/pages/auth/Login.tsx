@@ -36,7 +36,7 @@ export function Login() {
       footer={
         <>
           New here?{' '}
-          <Link to="/register" className="font-semibold text-brand-300 hover:underline">
+          <Link to="/register" className="font-semibold text-brand-700 dark:text-brand-300 hover:underline">
             Create an account
           </Link>
         </>
@@ -79,7 +79,7 @@ export function Login() {
             />
             Remember me
           </label>
-          <Link to="/forgot" className="text-sm font-semibold text-brand-300 hover:underline">
+          <Link to="/forgot" className="text-sm font-semibold text-brand-700 dark:text-brand-300 hover:underline">
             Forgot password?
           </Link>
         </div>

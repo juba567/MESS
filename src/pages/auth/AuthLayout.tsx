@@ -28,7 +28,7 @@ export function AuthLayout({
       {/* Brand / features panel */}
       <div className="hidden lg:flex flex-col justify-between w-[46%] max-w-xl p-12 relative">
         <Link to="/login" className="flex items-center gap-3">
-          <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-brand-500 to-violet-500 grid place-items-center text-white shadow-glow">
+          <div className="w-11 h-11 rounded-2xl grad-brand grid place-items-center text-white shadow-glow">
             <Sparkles className="w-6 h-6" />
           </div>
           <span className="font-display font-extrabold text-xl text-ink-900">Mess Manager</span>
@@ -51,7 +51,7 @@ export function AuthLayout({
                 transition={{ delay: 0.1 + i * 0.08 }}
                 className="glass rounded-3xl p-4"
               >
-                <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-brand-500 to-violet-500 grid place-items-center text-white mb-3">
+                <div className="w-10 h-10 rounded-2xl grad-brand grid place-items-center text-white mb-3">
                   {f.icon}
                 </div>
                 <p className="font-display font-bold text-ink-900">{f.title}</p>
@@ -73,7 +73,7 @@ export function AuthLayout({
           className="w-full max-w-md"
         >
           <div className="lg:hidden flex items-center gap-3 mb-6 justify-center">
-            <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-brand-500 to-violet-500 grid place-items-center text-white shadow-glow">
+            <div className="w-11 h-11 rounded-2xl grad-brand grid place-items-center text-white shadow-glow">
               <Sparkles className="w-6 h-6" />
             </div>
             <span className="font-display font-extrabold text-xl text-ink-900">Mess Manager</span>

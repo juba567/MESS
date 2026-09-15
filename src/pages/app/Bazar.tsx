@@ -109,7 +109,7 @@ export function Bazar() {
                       {canManage && (
                         <Menu
                           trigger={({ toggle }) => (
-                            <button onClick={toggle} className="w-8 h-8 grid place-items-center rounded-xl text-ink-400 hover:bg-white/[0.09] transition">⋯</button>
+                            <button onClick={toggle} className="w-8 h-8 grid place-items-center rounded-xl text-ink-400 hover:bg-overlay/[0.09] transition">⋯</button>
                           )}
                         >
                           {(close) => (
@@ -134,7 +134,7 @@ export function Bazar() {
                   </div>
                   <div className="mt-2 flex flex-wrap gap-1.5">
                     {b.items.map((it) => (
-                      <span key={it.id} className="inline-flex items-center gap-1 text-xs bg-white/[0.08] border border-white/[0.10] rounded-full px-2.5 py-1 text-ink-600">
+                      <span key={it.id} className="inline-flex items-center gap-1 text-xs bg-overlay/[0.08] border border-line/[0.10] rounded-full px-2.5 py-1 text-ink-600">
                         <span className="font-semibold text-ink-800">{it.name}</span>
                         {it.qty ? <span className="text-ink-400">{it.qty}{it.unit ? ` ${it.unit}` : ''}</span> : null}
                         <span className="text-ink-500">· {taka(it.price)}</span>

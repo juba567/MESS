@@ -70,7 +70,7 @@ export function MenuItem({
       onClick={onClick}
       className={cn(
         'w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition text-left',
-        danger ? 'text-rose-400 hover:bg-rose-500/10' : 'text-ink-700 hover:bg-white/[0.09]',
+        danger ? 'text-rose-700 dark:text-rose-400 hover:bg-rose-500/10' : 'text-ink-700 hover:bg-overlay/[0.09]',
       )}
     >
       {icon && <span className="shrink-0">{icon}</span>}

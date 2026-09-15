@@ -89,11 +89,11 @@ export function Payments() {
                 <p className="text-xs text-ink-500 truncate">{shortDate(p.date)}{p.note ? ` · ${p.note}` : ''}</p>
               </div>
               <Badge tone="green">{p.method}</Badge>
-              <span className="font-display font-extrabold text-emerald-400 text-lg">{taka(p.amount)}</span>
+              <span className="font-display font-extrabold text-emerald-700 dark:text-emerald-400 text-lg">{taka(p.amount)}</span>
               {canManage && (
                 <Menu
                   trigger={({ toggle }) => (
-                    <button onClick={toggle} className="w-8 h-8 grid place-items-center rounded-xl text-ink-400 hover:bg-white/[0.09] transition">⋯</button>
+                    <button onClick={toggle} className="w-8 h-8 grid place-items-center rounded-xl text-ink-400 hover:bg-overlay/[0.09] transition">⋯</button>
                   )}
                 >
                   {(close) => (

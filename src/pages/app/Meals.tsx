@@ -87,7 +87,7 @@ export function Meals() {
                 onClick={() => setSelId(m.id)}
                 className={cn(
                   'flex items-center gap-2 pl-1 pr-3 py-1 rounded-full border transition shrink-0',
-                  m.id === selId ? 'bg-gradient-to-br from-brand-500 to-violet-500 text-white border-transparent shadow-glow' : 'bg-white/[0.06] border-white/[0.10] text-ink-600 hover:bg-white/[0.10]',
+                  m.id === selId ? 'grad-brand text-white border-transparent shadow-glow' : 'bg-overlay/[0.06] border-line/[0.10] text-ink-600 hover:bg-overlay/[0.10]',
                 )}
               >
                 <Avatar name={m.name} color={m.avatarColor} size="xs" />
@@ -110,7 +110,7 @@ export function Meals() {
             if (!mm) {
               // Selected member wasn't part of the mess on this day.
               return (
-                <div key={date} className="aspect-square rounded-2xl border border-white/[0.05] bg-white/[0.02] flex items-center justify-center opacity-30">
+                <div key={date} className="aspect-square rounded-2xl border border-line/[0.05] bg-overlay/[0.02] flex items-center justify-center opacity-30">
                   <span className="text-xs font-semibold text-ink-500">{parseInt(date.slice(-2))}</span>
                 </div>
               )
@@ -126,15 +126,15 @@ export function Meals() {
                   off
                     ? 'bg-rose-500/10 border-rose-400/40 hover:bg-rose-500/15'
                     : total === 2
-                      ? 'bg-gradient-to-br from-brand-500/15 to-violet-500/10 border-brand-300/60'
+                      ? 'bg-gradient-to-br from-brand-500/15 to-brand-600/10 dark:to-violet-500/10 border-brand-300/60'
                       : 'bg-amber-500/10 border-amber-400/40',
                   isToday && 'ring-2 ring-brand-500/60',
                   isFuture && 'opacity-70',
                 )}
               >
-                <span className={cn('text-xs font-semibold', off ? 'text-rose-300' : 'text-brand-300')}>{parseInt(date.slice(-2))}</span>
+                <span className={cn('text-xs font-semibold', off ? 'text-rose-700 dark:text-rose-300' : 'text-brand-700 dark:text-brand-300')}>{parseInt(date.slice(-2))}</span>
                 {off ? (
-                  <span className="text-[9px] font-bold uppercase tracking-wide text-rose-300 leading-none mt-0.5">off</span>
+                  <span className="text-[9px] font-bold uppercase tracking-wide text-rose-700 dark:text-rose-300 leading-none mt-0.5">off</span>
                 ) : (
                   <span className="font-display font-extrabold text-ink-900 text-sm leading-none mt-0.5">{total}</span>
                 )}
@@ -146,19 +146,19 @@ export function Meals() {
             )
           })}
         </div>
-        <p className="text-xs text-ink-400 mt-3">Lunch &amp; dinner count automatically. Tap any day to cancel {selMember?.id === me?.id ? 'your' : `${selMember?.name?.split(' ')[0]}’s`} meals — cancelled days show <span className="text-rose-300 font-semibold">off</span>.</p>
+        <p className="text-xs text-ink-400 mt-3">Lunch &amp; dinner count automatically. Tap any day to cancel {selMember?.id === me?.id ? 'your' : `${selMember?.name?.split(' ')[0]}’s`} meals — cancelled days show <span className="text-rose-700 dark:text-rose-300 font-semibold">off</span>.</p>
       </Card>
 
       {/* Monthly per-member table */}
       <Card className="p-0 overflow-hidden">
         <div className="p-5 pb-3 flex items-center gap-2">
-          <Users2 className="w-4 h-4 text-brand-400" />
+          <Users2 className="w-4 h-4 text-brand-600 dark:text-brand-400" />
           <h2 className="font-display font-bold text-ink-900">Monthly meals by member</h2>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="text-left text-ink-500 border-y border-white/[0.10]">
+              <tr className="text-left text-ink-500 border-y border-line/[0.10]">
                 <th className="font-semibold px-5 py-2.5">Member</th>
                 <th className="font-semibold px-3 py-2.5 text-center">L</th>
                 <th className="font-semibold px-3 py-2.5 text-center">D</th>
@@ -169,7 +169,7 @@ export function Meals() {
             </thead>
             <tbody>
               {summary.members.map((m) => (
-                <tr key={m.memberId} className="border-b border-white/[0.10] hover:bg-white/[0.05] transition">
+                <tr key={m.memberId} className="border-b border-line/[0.10] hover:bg-overlay/[0.05] transition">
                   <td className="px-5 py-3">
                     <div className="flex items-center gap-2.5">
                       <Avatar name={m.member.name} color={m.member.avatarColor} size="xs" />
@@ -192,7 +192,7 @@ export function Meals() {
       {/* Guest meals */}
       <Card className="p-5">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="font-display font-bold text-ink-900 flex items-center gap-2"><Users2 className="w-4 h-4 text-brand-400" /> Guest meals</h2>
+          <h2 className="font-display font-bold text-ink-900 flex items-center gap-2"><Users2 className="w-4 h-4 text-brand-600 dark:text-brand-400" /> Guest meals</h2>
           <Button size="sm" variant="subtle" icon={<Plus className="w-4 h-4" />} onClick={() => openQuick('guest')}>Add</Button>
         </div>
         {guests.length === 0 ? (

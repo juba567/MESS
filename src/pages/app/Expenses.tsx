@@ -98,7 +98,7 @@ export function Expenses() {
               {canManage && (
                 <Menu
                   trigger={({ toggle }) => (
-                    <button onClick={toggle} className="w-8 h-8 grid place-items-center rounded-xl text-ink-400 hover:bg-white/[0.09] transition">⋯</button>
+                    <button onClick={toggle} className="w-8 h-8 grid place-items-center rounded-xl text-ink-400 hover:bg-overlay/[0.09] transition">⋯</button>
                   )}
                 >
                   {(close) => (

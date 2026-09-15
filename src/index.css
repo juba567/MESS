@@ -2,11 +2,166 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ============================================================================
+   Theme tokens. Two themes share one component tree: values are CSS variables
+   flipped by the `data-theme` attribute on <html>. Tailwind colors resolve to
+   `rgb(var(--x) / <alpha-value>)`, so every existing utility (text-ink-900,
+   bg-overlay/[.09], shadow-glass, …) re-themes with zero markup changes.
+   `:root` = LIGHT (default). `[data-theme="dark"]` = the original dark values.
+   ========================================================================== */
 :root {
+  color-scheme: light;
+
+  /* Backgrounds — warm oatmeal wash */
+  --bg-1: #f5ebe6;
+  --bg-2: #f0e4da;
+  --bg-3: #f8f1ea;
+  --body-text: #3d422e;
+
+  /* Ink scale — warm olive-grey; 900 = darkest text (#353A26 olive) */
+  --ink-50: 250 246 242;
+  --ink-100: 240 234 226;
+  --ink-200: 223 216 202;
+  --ink-300: 200 195 178;
+  --ink-400: 156 158 138;
+  --ink-500: 120 125 101;
+  --ink-600: 94 99 76;
+  --ink-700: 74 79 58;
+  --ink-800: 61 66 46;
+  --ink-900: 53 58 38;
+
+  /* Brand scale — mustard (accent / CTAs); 500 = #E0A96D */
+  --brand-50: 250 242 231;
+  --brand-100: 246 232 213;
+  --brand-200: 240 216 184;
+  --brand-300: 233 195 149;
+  --brand-400: 214 160 96;
+  --brand-500: 224 169 109;
+  --brand-600: 199 138 74;
+  --brand-700: 166 111 52;
+  --brand-800: 130 86 38;
+  --brand-900: 94 61 27;
+
+  /* Structural — dividers / hover fills (olive, used at low alpha) */
+  --line: 53 58 38;
+  --overlay: 53 58 38;
+
+  /* Ambient aurora blobs — warm */
+  --aurora-1: #e0a96d;
+  --aurora-2: #d98e6a;
+  --aurora-3: #9caf88;
+  --aurora-opacity: 0.42;
+
+  /* Shadows — soft, olive-tinted (no heavy black on beige) */
+  --shadow-glass: 0 8px 32px rgba(53, 58, 38, 0.1);
+  --shadow-glass-strong: 0 12px 40px rgba(53, 58, 38, 0.13);
+  --shadow-glass-lg: 0 24px 64px rgba(53, 58, 38, 0.16);
+  --shadow-glass-sm: 0 2px 12px rgba(53, 58, 38, 0.08);
+  --shadow-glow: 0 8px 30px rgba(224, 169, 109, 0.4);
+
+  /* Glass surfaces — frosted warm-white over beige */
+  --glass-bg: rgba(255, 255, 255, 0.55);
+  --glass-border: rgba(53, 58, 38, 0.08);
+  --glass-strong-bg: rgba(255, 255, 255, 0.72);
+  --glass-strong-border: rgba(53, 58, 38, 0.12);
+  --glass-panel-bg: rgba(255, 255, 255, 0.42);
+  --glass-panel-border: rgba(53, 58, 38, 0.07);
+
+  /* Inputs */
+  --input-bg: rgba(255, 255, 255, 0.6);
+  --input-border: rgba(53, 58, 38, 0.14);
+  --input-text: #3d422e;
+  --input-placeholder: #9c9e8a;
+  --input-focus-border: rgba(224, 169, 109, 0.85);
+  --input-focus-ring: rgba(224, 169, 109, 0.25);
+  --input-focus-bg: rgba(255, 255, 255, 0.8);
+
+  /* Primary button (mustard CTA with dark-olive text) */
+  --btn-grad: linear-gradient(135deg, #e0a96d 0%, #d2955a 50%, #c7883f 100%);
+  --btn-text: #353a26;
+  --btn-shadow: 0 8px 24px rgba(224, 169, 109, 0.4);
+  --btn-shadow-hover: 0 10px 30px rgba(224, 169, 109, 0.5);
+
+  /* Gradients */
+  --grad-text: linear-gradient(135deg, #8a5a2a, #c7883f);
+  --grad-brand: linear-gradient(135deg, #c78a4a, #a66f34);
+
+  /* Misc */
+  --sheen: rgba(53, 58, 38, 0.05);
+  --scrollbar-thumb: rgba(53, 58, 38, 0.18);
+  --scrollbar-thumb-hover: rgba(53, 58, 38, 0.32);
+}
+
+[data-theme='dark'] {
+  color-scheme: dark;
+
   --bg-1: #0a0c13;
   --bg-2: #0c0a16;
   --bg-3: #070a11;
-  color-scheme: dark;
+  --body-text: #eef2f8;
+
+  --ink-50: 11 14 20;
+  --ink-100: 20 26 36;
+  --ink-200: 30 38 50;
+  --ink-300: 51 62 78;
+  --ink-400: 120 133 154;
+  --ink-500: 150 161 178;
+  --ink-600: 179 188 202;
+  --ink-700: 208 215 224;
+  --ink-800: 231 235 241;
+  --ink-900: 247 249 252;
+
+  --brand-50: 238 242 255;
+  --brand-100: 224 231 255;
+  --brand-200: 199 210 254;
+  --brand-300: 165 180 252;
+  --brand-400: 129 140 248;
+  --brand-500: 99 102 241;
+  --brand-600: 79 70 229;
+  --brand-700: 67 56 202;
+  --brand-800: 55 48 163;
+  --brand-900: 49 46 129;
+
+  --line: 255 255 255;
+  --overlay: 255 255 255;
+
+  --aurora-1: #6366f1;
+  --aurora-2: #c026d3;
+  --aurora-3: #0891b2;
+  --aurora-opacity: 0.32;
+
+  --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.45);
+  --shadow-glass-strong: 0 12px 40px rgba(0, 0, 0, 0.55);
+  --shadow-glass-lg: 0 24px 64px rgba(0, 0, 0, 0.6);
+  --shadow-glass-sm: 0 2px 12px rgba(0, 0, 0, 0.35);
+  --shadow-glow: 0 8px 30px rgba(99, 102, 241, 0.45);
+
+  --glass-bg: rgba(255, 255, 255, 0.055);
+  --glass-border: rgba(255, 255, 255, 0.09);
+  --glass-strong-bg: rgba(255, 255, 255, 0.085);
+  --glass-strong-border: rgba(255, 255, 255, 0.13);
+  --glass-panel-bg: rgba(255, 255, 255, 0.04);
+  --glass-panel-border: rgba(255, 255, 255, 0.07);
+
+  --input-bg: rgba(255, 255, 255, 0.05);
+  --input-border: rgba(255, 255, 255, 0.12);
+  --input-text: #eef2f8;
+  --input-placeholder: #7c8798;
+  --input-focus-border: rgba(129, 140, 248, 0.7);
+  --input-focus-ring: rgba(99, 102, 241, 0.22);
+  --input-focus-bg: rgba(255, 255, 255, 0.08);
+
+  --btn-grad: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
+  --btn-text: #fff;
+  --btn-shadow: 0 8px 24px rgba(99, 102, 241, 0.32);
+  --btn-shadow-hover: 0 10px 30px rgba(99, 102, 241, 0.42);
+
+  --grad-text: linear-gradient(135deg, #4f46e5, #a855f7);
+  --grad-brand: linear-gradient(135deg, #6366f1, #8b5cf6);
+
+  --sheen: rgba(255, 255, 255, 0.12);
+  --scrollbar-thumb: rgba(148, 163, 184, 0.22);
+  --scrollbar-thumb-hover: rgba(148, 163, 184, 0.4);
 }
 
 * {
@@ -22,7 +177,7 @@ body,
 body {
   margin: 0;
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  color: #eef2f8;
+  color: var(--body-text);
   background: linear-gradient(135deg, var(--bg-1) 0%, var(--bg-2) 50%, var(--bg-3) 100%);
   background-attachment: fixed;
   -webkit-font-smoothing: antialiased;
@@ -42,98 +197,104 @@ body {
   position: absolute;
   border-radius: 9999px;
   filter: blur(90px);
-  opacity: 0.32;
+  opacity: var(--aurora-opacity);
 }
 .aurora span:nth-child(1) {
   width: 44vw;
   height: 44vw;
   top: -10vw;
   left: -8vw;
-  background: radial-gradient(circle at 30% 30%, #6366f1, transparent 70%);
+  background: radial-gradient(circle at 30% 30%, var(--aurora-1), transparent 70%);
 }
 .aurora span:nth-child(2) {
   width: 40vw;
   height: 40vw;
   top: 18vh;
   right: -10vw;
-  background: radial-gradient(circle at 60% 40%, #c026d3, transparent 70%);
+  background: radial-gradient(circle at 60% 40%, var(--aurora-2), transparent 70%);
 }
 .aurora span:nth-child(3) {
   width: 38vw;
   height: 38vw;
   bottom: -12vw;
   left: 22vw;
-  background: radial-gradient(circle at 50% 50%, #0891b2, transparent 70%);
+  background: radial-gradient(circle at 50% 50%, var(--aurora-3), transparent 70%);
 }
 
-/* ---------- Glass surfaces (dark) ---------- */
+/* ---------- Glass surfaces (theme-driven) ---------- */
 .glass {
-  background: rgba(255, 255, 255, 0.055);
+  background: var(--glass-bg);
   backdrop-filter: blur(20px) saturate(140%);
   -webkit-backdrop-filter: blur(20px) saturate(140%);
-  border: 1px solid rgba(255, 255, 255, 0.09);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-glass);
 }
 .glass-strong {
-  background: rgba(255, 255, 255, 0.085);
+  background: var(--glass-strong-bg);
   backdrop-filter: blur(26px) saturate(150%);
   -webkit-backdrop-filter: blur(26px) saturate(150%);
-  border: 1px solid rgba(255, 255, 255, 0.13);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.55);
+  border: 1px solid var(--glass-strong-border);
+  box-shadow: var(--shadow-glass-strong);
 }
 .glass-panel {
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--glass-panel-bg);
   backdrop-filter: blur(16px) saturate(140%);
   -webkit-backdrop-filter: blur(16px) saturate(140%);
-  border: 1px solid rgba(255, 255, 255, 0.07);
+  border: 1px solid var(--glass-panel-border);
 }
 
 /* Inputs */
 .glass-input {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  color: #eef2f8;
+  background: var(--input-bg);
+  border: 1px solid var(--input-border);
+  color: var(--input-text);
   transition: all 0.2s ease;
 }
 .glass-input:focus {
   outline: none;
-  border-color: rgba(129, 140, 248, 0.7);
-  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.22);
-  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--input-focus-border);
+  box-shadow: 0 0 0 4px var(--input-focus-ring);
+  background: var(--input-focus-bg);
 }
 .glass-input::placeholder {
-  color: #7c8798;
+  color: var(--input-placeholder);
 }
 
 /* Native <select> popups render on an opaque OS surface (white on Windows/Chrome).
-   Our input text is near-white (ink-900) for the dark UI, so option text would be
-   invisible in the open dropdown — force readable dark-on-white for the list items. */
+   Force readable dark-on-white list items in both themes (in dark the input text is
+   near-white and would otherwise be invisible in the open dropdown). */
 select option,
 select optgroup {
   color: #0f172a;
   background-color: #ffffff;
 }
 
-/* Gradient primary button */
+/* Gradient primary button (mustard CTA in light, indigo in dark) */
 .btn-gradient {
-  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
-  color: #fff;
-  box-shadow: 0 8px 24px rgba(99, 102, 241, 0.32);
+  background: var(--btn-grad);
+  color: var(--btn-text);
+  box-shadow: var(--btn-shadow);
   transition: transform 0.15s ease, box-shadow 0.2s ease, filter 0.2s ease;
 }
 .btn-gradient:hover {
   filter: brightness(1.05);
-  box-shadow: 0 10px 30px rgba(99, 102, 241, 0.42);
+  box-shadow: var(--btn-shadow-hover);
 }
 .btn-gradient:active {
   transform: translateY(1px) scale(0.99);
 }
 
 .gradient-text {
-  background: linear-gradient(135deg, #4f46e5, #a855f7);
+  background: var(--grad-text);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
+}
+
+/* Themeable brand gradient for icon squares / hero chips (replaces the old
+   literal `from-brand-500 to-violet-500`; deep mustard in light so white reads). */
+.grad-brand {
+  background-image: var(--grad-brand);
 }
 
 /* Subtle sheen on cards */
@@ -145,7 +306,7 @@ select optgroup {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(120deg, transparent 30%, rgba(255, 255, 255, 0.12) 50%, transparent 70%);
+  background: linear-gradient(120deg, transparent 30%, var(--sheen) 50%, transparent 70%);
   transform: translateX(-100%);
   transition: transform 0.8s ease;
 }
@@ -162,13 +323,13 @@ select optgroup {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(148, 163, 184, 0.22);
+  background: var(--scrollbar-thumb);
   border-radius: 9999px;
   border: 2px solid transparent;
   background-clip: content-box;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(148, 163, 184, 0.4);
+  background: var(--scrollbar-thumb-hover);
   background-clip: content-box;
 }
 

@@ -18,10 +18,10 @@ const base =
 
 const variants: Record<Variant, string> = {
   primary: 'btn-gradient',
-  secondary: 'glass-strong text-ink-800 hover:bg-white/[0.10]',
-  ghost: 'text-ink-600 hover:bg-white/[0.08]',
+  secondary: 'glass-strong text-ink-800 hover:bg-overlay/[0.10]',
+  ghost: 'text-ink-600 hover:bg-overlay/[0.08]',
   danger: 'bg-gradient-to-br from-rose-500 to-red-500 text-white shadow-[0_8px_24px_rgba(244,63,94,0.3)] hover:brightness-105',
-  subtle: 'bg-brand-500/10 text-brand-300 hover:bg-brand-500/20',
+  subtle: 'bg-brand-500/10 text-brand-700 dark:text-brand-300 hover:bg-brand-500/20',
 }
 
 const sizes: Record<Size, string> = {

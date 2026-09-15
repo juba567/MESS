@@ -1,6 +1,10 @@
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
+  // Theme is driven by the `data-theme` attribute on <html>; enabling the
+  // selector strategy lets us add `dark:` variants for the few saturated-tint
+  // TEXT colors that need a deeper step on beige (bright on dark, deep on light).
+  darkMode: ['selector', '[data-theme="dark"]'],
   theme: {
     extend: {
       fontFamily: {
@@ -8,40 +12,44 @@ export default {
         display: ['"Plus Jakarta Sans"', 'Inter', 'system-ui', 'sans-serif'],
       },
       colors: {
+        // brand + ink resolve to CSS vars (channels) so they flip per theme.
         brand: {
-          50: '#eef2ff',
-          100: '#e0e7ff',
-          200: '#c7d2fe',
-          300: '#a5b4fc',
-          400: '#818cf8',
-          500: '#6366f1',
-          600: '#4f46e5',
-          700: '#4338ca',
-          800: '#3730a3',
-          900: '#312e81',
+          50: 'rgb(var(--brand-50) / <alpha-value>)',
+          100: 'rgb(var(--brand-100) / <alpha-value>)',
+          200: 'rgb(var(--brand-200) / <alpha-value>)',
+          300: 'rgb(var(--brand-300) / <alpha-value>)',
+          400: 'rgb(var(--brand-400) / <alpha-value>)',
+          500: 'rgb(var(--brand-500) / <alpha-value>)',
+          600: 'rgb(var(--brand-600) / <alpha-value>)',
+          700: 'rgb(var(--brand-700) / <alpha-value>)',
+          800: 'rgb(var(--brand-800) / <alpha-value>)',
+          900: 'rgb(var(--brand-900) / <alpha-value>)',
         },
         ink: {
-          50: '#0b0e14',
-          100: '#141a24',
-          200: '#1e2632',
-          300: '#333e4e',
-          400: '#78859a',
-          500: '#96a1b2',
-          600: '#b3bcca',
-          700: '#d0d7e0',
-          800: '#e7ebf1',
-          900: '#f7f9fc',
+          50: 'rgb(var(--ink-50) / <alpha-value>)',
+          100: 'rgb(var(--ink-100) / <alpha-value>)',
+          200: 'rgb(var(--ink-200) / <alpha-value>)',
+          300: 'rgb(var(--ink-300) / <alpha-value>)',
+          400: 'rgb(var(--ink-400) / <alpha-value>)',
+          500: 'rgb(var(--ink-500) / <alpha-value>)',
+          600: 'rgb(var(--ink-600) / <alpha-value>)',
+          700: 'rgb(var(--ink-700) / <alpha-value>)',
+          800: 'rgb(var(--ink-800) / <alpha-value>)',
+          900: 'rgb(var(--ink-900) / <alpha-value>)',
         },
+        // Structural tokens: dividers/borders + hover/pressed fills.
+        line: 'rgb(var(--line) / <alpha-value>)',
+        overlay: 'rgb(var(--overlay) / <alpha-value>)',
       },
       borderRadius: {
         '4xl': '2rem',
         '5xl': '2.5rem',
       },
       boxShadow: {
-        glass: '0 8px 32px rgba(0, 0, 0, 0.45)',
-        'glass-lg': '0 24px 64px rgba(0, 0, 0, 0.6)',
-        'glass-sm': '0 2px 12px rgba(0, 0, 0, 0.35)',
-        glow: '0 8px 30px rgba(99, 102, 241, 0.45)',
+        glass: 'var(--shadow-glass)',
+        'glass-lg': 'var(--shadow-glass-lg)',
+        'glass-sm': 'var(--shadow-glass-sm)',
+        glow: 'var(--shadow-glow)',
       },
       keyframes: {
         'fade-in': {

@@ -65,7 +65,7 @@ export function Modal({ open, onClose, title, description, icon, children, foote
             {(title || !hideClose) && (
               <div className="flex items-start gap-3 px-5 pt-4 sm:pt-5 pb-3">
                 {icon && (
-                  <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-brand-500 to-violet-500 grid place-items-center text-white shrink-0 shadow-glow">
+                  <div className="w-11 h-11 rounded-2xl grad-brand grid place-items-center text-white shrink-0 shadow-glow">
                     {icon}
                   </div>
                 )}
@@ -76,7 +76,7 @@ export function Modal({ open, onClose, title, description, icon, children, foote
                 {!hideClose && (
                   <button
                     onClick={onClose}
-                    className="shrink-0 w-9 h-9 grid place-items-center rounded-xl text-ink-500 hover:bg-white/[0.09] transition"
+                    className="shrink-0 w-9 h-9 grid place-items-center rounded-xl text-ink-500 hover:bg-overlay/[0.09] transition"
                     aria-label="Close"
                   >
                     <X className="w-5 h-5" />
@@ -87,7 +87,7 @@ export function Modal({ open, onClose, title, description, icon, children, foote
 
             <div className="px-5 pb-2 overflow-y-auto flex-1">{children}</div>
 
-            {footer && <div className="px-5 py-4 border-t border-white/[0.10] flex gap-2.5 justify-end pb-safe sm:pb-4">{footer}</div>}
+            {footer && <div className="px-5 py-4 border-t border-line/[0.10] flex gap-2.5 justify-end pb-safe sm:pb-4">{footer}</div>}
           </motion.div>
         </motion.div>
       )}

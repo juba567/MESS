@@ -88,7 +88,7 @@ export function Reports() {
           <BreakdownRow icon={<ShoppingCart className="w-4 h-4" />} label="Bazar (groceries)" value={summary.totalBazar} tone="from-emerald-500 to-teal-500" total={summary.totalCost} />
           <BreakdownRow icon={<UtensilsCrossed className="w-4 h-4" />} label="Meal-based expenses" value={summary.mealExpenses} tone="from-brand-500 to-violet-500" total={summary.totalCost} />
           <BreakdownRow icon={<Receipt className="w-4 h-4" />} label="Other (equally split)" value={summary.otherExpenses} tone="from-amber-400 to-orange-500" total={summary.totalCost} />
-          <div className="flex items-center justify-between pt-3 border-t border-white/[0.10]">
+          <div className="flex items-center justify-between pt-3 border-t border-line/[0.10]">
             <span className="font-semibold text-ink-700">Total cost</span>
             <span className="font-display font-extrabold text-xl text-ink-900">{taka(summary.totalCost)}</span>
           </div>
@@ -105,7 +105,7 @@ export function Reports() {
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="text-left text-ink-500 border-y border-white/[0.10]">
+              <tr className="text-left text-ink-500 border-y border-line/[0.10]">
                 <th className="font-semibold px-5 py-2.5">Member</th>
                 <th className="font-semibold px-3 py-2.5 text-center">Meals</th>
                 <th className="font-semibold px-3 py-2.5 text-right">Meal cost</th>
@@ -117,7 +117,7 @@ export function Reports() {
             </thead>
             <tbody>
               {summary.members.map((m) => (
-                <tr key={m.memberId} className="border-b border-white/[0.10]">
+                <tr key={m.memberId} className="border-b border-line/[0.10]">
                   <td className="px-5 py-3">
                     <div className="flex items-center gap-2.5">
                       <Avatar name={m.member.name} color={m.member.avatarColor} size="xs" />
@@ -129,21 +129,21 @@ export function Reports() {
                   <td className="px-3 py-3 text-right tabular-nums text-ink-700">{taka(m.mealCost)}</td>
                   <td className="px-3 py-3 text-right tabular-nums text-ink-700">{taka(m.otherCost)}</td>
                   <td className="px-3 py-3 text-right tabular-nums font-semibold text-ink-900">{taka(m.totalCost)}</td>
-                  <td className="px-3 py-3 text-right tabular-nums text-emerald-400">{taka(m.paid)}</td>
-                  <td className={cn('px-5 py-3 text-right tabular-nums font-bold', m.status === 'due' ? 'text-rose-400' : m.status === 'receivable' ? 'text-emerald-400' : 'text-ink-400')}>
+                  <td className="px-3 py-3 text-right tabular-nums text-emerald-700 dark:text-emerald-400">{taka(m.paid)}</td>
+                  <td className={cn('px-5 py-3 text-right tabular-nums font-bold', m.status === 'due' ? 'text-rose-700 dark:text-rose-400' : m.status === 'receivable' ? 'text-emerald-700 dark:text-emerald-400' : 'text-ink-400')}>
                     {taka(m.balance, { sign: true })}
                   </td>
                 </tr>
               ))}
             </tbody>
             <tfoot>
-              <tr className="border-t-2 border-white/[0.10] font-bold text-ink-900">
+              <tr className="border-t-2 border-line/[0.10] font-bold text-ink-900">
                 <td className="px-5 py-3">Total</td>
                 <td className="px-3 py-3 text-center tabular-nums">{summary.totalMeals}</td>
                 <td className="px-3 py-3" />
                 <td className="px-3 py-3" />
                 <td className="px-3 py-3 text-right tabular-nums">{taka(summary.totalCost)}</td>
-                <td className="px-3 py-3 text-right tabular-nums text-emerald-400">{taka(summary.totalCollected)}</td>
+                <td className="px-3 py-3 text-right tabular-nums text-emerald-700 dark:text-emerald-400">{taka(summary.totalCollected)}</td>
                 <td className="px-5 py-3" />
               </tr>
             </tfoot>
@@ -153,7 +153,7 @@ export function Reports() {
 
       {/* Bazar by category */}
       <Card className="p-5">
-        <h2 className="font-display font-bold text-ink-900 mb-4 flex items-center gap-2"><ShoppingCart className="w-4 h-4 text-brand-400" /> Bazar by category</h2>
+        <h2 className="font-display font-bold text-ink-900 mb-4 flex items-center gap-2"><ShoppingCart className="w-4 h-4 text-brand-600 dark:text-brand-400" /> Bazar by category</h2>
         {catTotals.length === 0 ? (
           <EmptyState icon={<ShoppingCart className="w-7 h-7" />} title="No bazar this month" />
         ) : (
@@ -162,7 +162,7 @@ export function Reports() {
               <div key={cat} className="flex items-center gap-3">
                 <span className="w-24 text-sm font-medium text-ink-600 shrink-0">{cat}</span>
                 <div className="flex-1 h-2.5 rounded-full bg-ink-200/60 overflow-hidden">
-                  <div className="h-full rounded-full bg-gradient-to-r from-brand-500 to-violet-500" style={{ width: `${(amt / (catTotals[0][1] || 1)) * 100}%` }} />
+                  <div className="h-full rounded-full grad-brand" style={{ width: `${(amt / (catTotals[0][1] || 1)) * 100}%` }} />
                 </div>
                 <span className="text-sm font-semibold text-ink-800 tabular-nums w-20 text-right">{taka(amt)}</span>
               </div>

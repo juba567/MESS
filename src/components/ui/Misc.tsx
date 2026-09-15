@@ -16,7 +16,7 @@ export function Segmented<T extends string>({
   className?: string
 }) {
   return (
-    <div className={cn('inline-flex p-1 rounded-2xl bg-white/[0.06] border border-white/[0.10] gap-1', className)}>
+    <div className={cn('inline-flex p-1 rounded-2xl bg-overlay/[0.06] border border-line/[0.10] gap-1', className)}>
       {options.map((o) => {
         const active = o.value === value
         return (
@@ -26,7 +26,7 @@ export function Segmented<T extends string>({
             className={cn(
               'inline-flex items-center justify-center gap-1.5 rounded-xl font-semibold transition-all',
               size === 'sm' ? 'px-3 py-1.5 text-xs' : 'px-4 py-2 text-sm',
-              active ? 'bg-gradient-to-br from-brand-500 to-violet-500 text-white shadow-glow' : 'text-ink-600 hover:bg-white/[0.09]',
+              active ? 'grad-brand text-white shadow-glow' : 'text-ink-600 hover:bg-overlay/[0.09]',
             )}
           >
             {o.icon}
@@ -57,24 +57,24 @@ export function Stepper({
     <div
       className={cn(
         'inline-flex items-center rounded-2xl border transition-colors',
-        active && tone === 'brand' ? 'bg-brand-500/10 border-brand-300' : 'bg-white/[0.06] border-white/[0.10]',
+        active && tone === 'brand' ? 'bg-brand-500/10 border-brand-300' : 'bg-overlay/[0.06] border-line/[0.10]',
       )}
     >
       <button
         onClick={() => onChange(Math.max(min, value - 1))}
         disabled={value <= min}
-        className="w-9 h-9 grid place-items-center rounded-l-2xl text-ink-500 hover:bg-white/[0.09] disabled:opacity-30 transition"
+        className="w-9 h-9 grid place-items-center rounded-l-2xl text-ink-500 hover:bg-overlay/[0.09] disabled:opacity-30 transition"
         aria-label="Decrease"
       >
         <Minus className="w-4 h-4" />
       </button>
-      <span className={cn('w-8 text-center font-bold tabular-nums', active ? 'text-brand-300' : 'text-ink-400')}>
+      <span className={cn('w-8 text-center font-bold tabular-nums', active ? 'text-brand-700 dark:text-brand-300' : 'text-ink-400')}>
         {value}
       </span>
       <button
         onClick={() => onChange(Math.min(max, value + 1))}
         disabled={value >= max}
-        className="w-9 h-9 grid place-items-center rounded-r-2xl text-ink-500 hover:bg-white/[0.09] disabled:opacity-30 transition"
+        className="w-9 h-9 grid place-items-center rounded-r-2xl text-ink-500 hover:bg-overlay/[0.09] disabled:opacity-30 transition"
         aria-label="Increase"
       >
         <Plus className="w-4 h-4" />
@@ -100,7 +100,7 @@ export function EmptyState({
   return (
     <div className={cn('text-center py-12 px-6 flex flex-col items-center', className)}>
       {icon && (
-        <div className="w-16 h-16 rounded-3xl bg-gradient-to-br from-brand-500/15 to-violet-500/15 grid place-items-center text-brand-500 mb-4">
+        <div className="w-16 h-16 rounded-3xl bg-gradient-to-br from-brand-500/15 to-brand-600/15 dark:to-violet-500/15 grid place-items-center text-brand-500 mb-4">
           {icon}
         </div>
       )}
@@ -127,8 +127,8 @@ export function Chip({
       className={cn(
         'px-3.5 py-1.5 rounded-full text-sm font-semibold whitespace-nowrap transition-all border',
         active
-          ? 'bg-gradient-to-br from-brand-500 to-violet-500 text-white border-transparent shadow-glow'
-          : 'bg-white/[0.06] text-ink-600 border-white/[0.10] hover:bg-white/[0.10]',
+          ? 'grad-brand text-white border-transparent shadow-glow'
+          : 'bg-overlay/[0.06] text-ink-600 border-line/[0.10] hover:bg-overlay/[0.10]',
       )}
     >
       {children}

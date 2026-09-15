@@ -58,7 +58,7 @@ export function Members() {
           <span>Mess code</span>
           <button
             onClick={() => { navigator.clipboard?.writeText(mess?.code ?? ''); toast('Code copied') }}
-            className="inline-flex items-center gap-1.5 font-mono font-bold tracking-widest text-ink-800 bg-white/[0.08] rounded-lg px-2 py-1 hover:bg-white/[0.10] transition"
+            className="inline-flex items-center gap-1.5 font-mono font-bold tracking-widest text-ink-800 bg-overlay/[0.08] rounded-lg px-2 py-1 hover:bg-overlay/[0.10] transition"
           >
             {mess?.code} <Copy className="w-3 h-3" />
           </button>
@@ -88,7 +88,7 @@ export function Members() {
                   <p className="text-xs text-ink-500 truncate">{m.contact ?? 'No contact'} · {bal?.meals ?? 0} meals</p>
                 </button>
                 <div className="text-right shrink-0">
-                  <p className={cn('font-bold tabular-nums', bal?.status === 'due' ? 'text-rose-400' : bal?.status === 'receivable' ? 'text-emerald-400' : 'text-ink-400')}>
+                  <p className={cn('font-bold tabular-nums', bal?.status === 'due' ? 'text-rose-700 dark:text-rose-400' : bal?.status === 'receivable' ? 'text-emerald-700 dark:text-emerald-400' : 'text-ink-400')}>
                     {bal && bal.status !== 'settled' ? taka(Math.abs(bal.balance)) : '—'}
                   </p>
                   <p className="text-[11px] text-ink-400">{bal?.status === 'due' ? 'owes' : bal?.status === 'receivable' ? 'receivable' : 'settled'}</p>
@@ -96,7 +96,7 @@ export function Members() {
                 {showMenu ? (
                   <Menu
                     trigger={({ toggle }) => (
-                      <button onClick={toggle} className="w-8 h-8 grid place-items-center rounded-xl text-ink-400 hover:bg-white/[0.09] transition shrink-0">⋯</button>
+                      <button onClick={toggle} className="w-8 h-8 grid place-items-center rounded-xl text-ink-400 hover:bg-overlay/[0.09] transition shrink-0">⋯</button>
                     )}
                   >
                     {(close) => (

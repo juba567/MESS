@@ -54,14 +54,14 @@ export function Dashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="lg:col-span-2">
           <Card variant="strong" className="p-6 sm:p-7 h-full relative overflow-hidden">
-            <div className="absolute -right-8 -top-8 w-40 h-40 rounded-full bg-gradient-to-br from-brand-500/20 to-violet-500/10 blur-2xl" />
+            <div className="absolute -right-8 -top-8 w-40 h-40 rounded-full bg-gradient-to-br from-brand-500/20 to-brand-600/10 dark:to-violet-500/10 blur-2xl" />
             <div className="relative">
               <div className="flex items-center justify-between">
                 <p className="text-sm font-semibold text-ink-500">Your balance · {monthLabel(month)}</p>
                 <Badge tone={statusTone as any} dot>{statusText}</Badge>
               </div>
               <p className={cn('mt-2 font-display font-extrabold text-4xl sm:text-5xl tracking-tight',
-                mine?.status === 'due' ? 'text-rose-400' : mine?.status === 'receivable' ? 'text-emerald-400' : 'text-ink-800')}>
+                mine?.status === 'due' ? 'text-rose-700 dark:text-rose-400' : mine?.status === 'receivable' ? 'text-emerald-700 dark:text-emerald-400' : 'text-ink-800')}>
                 {taka(Math.abs(mine?.balance ?? 0))}
               </p>
               <div className="grid grid-cols-3 gap-3 mt-6">
@@ -118,22 +118,22 @@ export function Dashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <Card className="p-5">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="font-display font-bold text-ink-900 flex items-center gap-2"><Users2 className="w-4 h-4 text-brand-400" /> Member balances</h2>
-            <button onClick={() => navigate('/app/members')} className="text-sm font-semibold text-brand-300 hover:underline">View all</button>
+            <h2 className="font-display font-bold text-ink-900 flex items-center gap-2"><Users2 className="w-4 h-4 text-brand-600 dark:text-brand-400" /> Member balances</h2>
+            <button onClick={() => navigate('/app/members')} className="text-sm font-semibold text-brand-700 dark:text-brand-300 hover:underline">View all</button>
           </div>
           <div className="space-y-1.5">
             {summary.members.map((m) => (
               <button
                 key={m.memberId}
                 onClick={() => navigate(`/app/members/${m.memberId}`)}
-                className="w-full flex items-center gap-3 py-2 px-2 rounded-2xl hover:bg-white/[0.08] transition text-left"
+                className="w-full flex items-center gap-3 py-2 px-2 rounded-2xl hover:bg-overlay/[0.08] transition text-left"
               >
                 <Avatar name={m.member.name} color={m.member.avatarColor} size="sm" />
                 <div className="min-w-0 flex-1">
                   <p className="font-semibold text-ink-800 text-sm truncate">{m.member.name}</p>
                   <p className="text-xs text-ink-500">{m.meals} meals · paid {taka(m.paid)}</p>
                 </div>
-                <span className={cn('font-bold text-sm tabular-nums', m.status === 'due' ? 'text-rose-400' : m.status === 'receivable' ? 'text-emerald-400' : 'text-ink-400')}>
+                <span className={cn('font-bold text-sm tabular-nums', m.status === 'due' ? 'text-rose-700 dark:text-rose-400' : m.status === 'receivable' ? 'text-emerald-700 dark:text-emerald-400' : 'text-ink-400')}>
                   {m.status === 'settled' ? '—' : taka(Math.abs(m.balance))}
                 </span>
               </button>
@@ -144,7 +144,7 @@ export function Dashboard() {
         <Card className="p-5">
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-display font-bold text-ink-900">Recent activity</h2>
-            <button onClick={() => navigate('/app/activity')} className="text-sm font-semibold text-brand-300 hover:underline">View all</button>
+            <button onClick={() => navigate('/app/activity')} className="text-sm font-semibold text-brand-700 dark:text-brand-300 hover:underline">View all</button>
           </div>
 
           {onLeaveToday.length > 0 && (
@@ -162,7 +162,7 @@ export function Dashboard() {
             <div className="space-y-3">
               {activities.map((a) => (
                 <div key={a.id} className="flex items-start gap-3">
-                  <div className="w-8 h-8 rounded-xl bg-white/[0.09] grid place-items-center shrink-0 mt-0.5">
+                  <div className="w-8 h-8 rounded-xl bg-overlay/[0.09] grid place-items-center shrink-0 mt-0.5">
                     <span className="w-1.5 h-1.5 rounded-full bg-brand-500" />
                   </div>
                   <div className="min-w-0 flex-1">

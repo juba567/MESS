@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom'
-import { Bell, ChevronDown, LogOut, Settings, User as UserIcon, UserPlus, Check, Plus } from 'lucide-react'
+import { Bell, ChevronDown, LogOut, Settings, User as UserIcon, UserPlus, Check, Plus, Sun, Moon } from 'lucide-react'
 import { useStore } from '@/lib/store'
 import { useMess, useUser } from '@/hooks/useMess'
 import { useUI } from '@/lib/ui-store'
@@ -12,6 +12,8 @@ export function Topbar() {
   const user = useUser()
   const mess = useMess()
   const openQuick = useUI((s) => s.openQuick)
+  const theme = useUI((s) => s.theme)
+  const toggleTheme = useUI((s) => s.toggleTheme)
   const logout = useStore((s) => s.logout)
   const switchMess = useStore((s) => s.switchMess)
 
@@ -28,8 +30,8 @@ export function Topbar() {
           width="w-64"
           align="left"
           trigger={({ toggle }) => (
-            <button onClick={toggle} className="flex items-center gap-2.5 px-2 py-1.5 rounded-2xl hover:bg-white/[0.08] transition min-w-0">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-500 to-violet-500 grid place-items-center text-white font-display font-bold shrink-0">
+            <button onClick={toggle} className="flex items-center gap-2.5 px-2 py-1.5 rounded-2xl hover:bg-overlay/[0.08] transition min-w-0">
+              <div className="w-9 h-9 rounded-xl grad-brand grid place-items-center text-white font-display font-bold shrink-0">
                 {mess?.name?.[0] ?? 'M'}
               </div>
               <div className="min-w-0 text-left hidden xs:block sm:block">
@@ -48,7 +50,7 @@ export function Topbar() {
               {myMesses.map((m) => (
                 <MenuItem
                   key={m.id}
-                  icon={<div className="w-6 h-6 rounded-lg bg-gradient-to-br from-brand-500 to-violet-500 grid place-items-center text-white text-xs font-bold">{m.name[0]}</div>}
+                  icon={<div className="w-6 h-6 rounded-lg grad-brand grid place-items-center text-white text-xs font-bold">{m.name[0]}</div>}
                   onClick={async () => {
                     await switchMess(m.id)
                     navigate('/app')
@@ -56,10 +58,10 @@ export function Topbar() {
                   }}
                 >
                   <span className="flex-1 truncate">{m.name}</span>
-                  {m.id === mess?.id && <Check className="w-4 h-4 text-brand-400" />}
+                  {m.id === mess?.id && <Check className="w-4 h-4 text-brand-600 dark:text-brand-400" />}
                 </MenuItem>
               ))}
-              <div className="my-1 border-t border-white/[0.10]" />
+              <div className="my-1 border-t border-line/[0.10]" />
               <MenuItem icon={<Plus className="w-4 h-4" />} onClick={() => { navigate('/onboarding'); close() }}>
                 Create or join a mess
               </MenuItem>
@@ -70,14 +72,23 @@ export function Topbar() {
         <div className="flex items-center gap-1 sm:gap-2">
           <button
             onClick={() => openQuick('invite')}
-            className="hidden sm:inline-flex items-center gap-1.5 px-3 py-2 rounded-2xl text-sm font-semibold text-brand-300 bg-brand-500/10 hover:bg-brand-500/20 transition"
+            className="hidden sm:inline-flex items-center gap-1.5 px-3 py-2 rounded-2xl text-sm font-semibold text-brand-700 dark:text-brand-300 bg-brand-500/10 hover:bg-brand-500/20 transition"
           >
             <UserPlus className="w-4 h-4" /> Invite
           </button>
 
           <button
+            onClick={toggleTheme}
+            className="w-10 h-10 grid place-items-center rounded-2xl hover:bg-overlay/[0.08] transition text-ink-600"
+            aria-label={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
+            title={theme === 'dark' ? 'Light mode' : 'Dark mode'}
+          >
+            {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+          </button>
+
+          <button
             onClick={() => navigate('/app/notifications')}
-            className="relative w-10 h-10 grid place-items-center rounded-2xl hover:bg-white/[0.08] transition text-ink-600"
+            className="relative w-10 h-10 grid place-items-center rounded-2xl hover:bg-overlay/[0.08] transition text-ink-600"
             aria-label="Notifications"
           >
             <Bell className="w-5 h-5" />
@@ -90,7 +101,7 @@ export function Topbar() {
 
           <Menu
             trigger={({ toggle }) => (
-              <button onClick={toggle} className="rounded-full hover:ring-2 hover:ring-white/[0.18] transition">
+              <button onClick={toggle} className="rounded-full hover:ring-2 hover:ring-line/[0.18] transition">
                 <Avatar name={user?.fullName ?? '?'} color={user?.avatarColor} url={user?.avatarUrl} size="md" ring />
               </button>
             )}
@@ -101,14 +112,14 @@ export function Topbar() {
                   <p className="font-semibold text-ink-900 text-sm truncate">{user?.fullName}</p>
                   <p className="text-xs text-ink-500 truncate">{user?.contact}</p>
                 </div>
-                <div className="my-1 border-t border-white/[0.10]" />
+                <div className="my-1 border-t border-line/[0.10]" />
                 <MenuItem icon={<UserIcon className="w-4 h-4" />} onClick={() => { navigate('/app/settings'); close() }}>
                   Profile
                 </MenuItem>
                 <MenuItem icon={<Settings className="w-4 h-4" />} onClick={() => { navigate('/app/settings'); close() }}>
                   Settings
                 </MenuItem>
-                <div className="my-1 border-t border-white/[0.10]" />
+                <div className="my-1 border-t border-line/[0.10]" />
                 <MenuItem icon={<LogOut className="w-4 h-4" />} danger onClick={async () => { await logout(); navigate('/login') }}>
                   Log out
                 </MenuItem>

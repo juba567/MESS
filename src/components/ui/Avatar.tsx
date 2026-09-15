@@ -24,7 +24,7 @@ export function Avatar({ name, color, url, size = 'md', ring, className }: Avata
       className={cn(
         'rounded-full grid place-items-center font-bold text-white shrink-0 overflow-hidden',
         sizeMap[size],
-        ring && 'ring-2 ring-white/[0.18] shadow-glass-sm',
+        ring && 'ring-2 ring-line/[0.18] shadow-glass-sm',
         className,
       )}
       style={{ background: url ? undefined : color || 'linear-gradient(135deg,#6366f1,#8b5cf6)' }}

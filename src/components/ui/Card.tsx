@@ -12,7 +12,7 @@ const variantClass: Record<Variant, string> = {
   default: 'glass',
   strong: 'glass-strong',
   panel: 'glass-panel',
-  plain: 'bg-white/[0.09]',
+  plain: 'bg-overlay/[0.09]',
 }
 
 export const Card = forwardRef<HTMLDivElement, CardProps>(function Card(
@@ -48,7 +48,7 @@ export function SectionTitle({
     <div className="flex items-start justify-between gap-3 mb-4">
       <div className="flex items-center gap-3 min-w-0">
         {icon && (
-          <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-brand-500 to-violet-500 grid place-items-center text-white shrink-0 shadow-glow">
+          <div className="w-10 h-10 rounded-2xl grad-brand grid place-items-center text-white shrink-0 shadow-glow">
             {icon}
           </div>
         )}

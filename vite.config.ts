@@ -15,8 +15,8 @@ export default defineConfig({
         description:
           'Manage a shared mess: meals, bazar, expenses, payments and monthly settlements.',
         lang: 'en',
-        theme_color: '#0a0c13',
-        background_color: '#0a0c13',
+        theme_color: '#f5ebe6',
+        background_color: '#f5ebe6',
         display: 'standalone',
         orientation: 'portrait',
         scope: '/',

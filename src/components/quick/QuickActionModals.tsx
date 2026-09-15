@@ -526,7 +526,7 @@ function InviteModal({ open, onClose }: { open: boolean; onClose: () => void }) 
     <Modal open={open} onClose={onClose} title="Invite members" description={`${activeCount} / ${mess?.maxMembers ?? 0} members`} icon={<Users2 className="w-5 h-5" />}>
       <div className="space-y-4">
         {full && (
-          <div className="rounded-2xl bg-amber-500/15 text-amber-300 px-4 py-3 text-sm font-medium">
+          <div className="rounded-2xl bg-amber-500/15 text-amber-700 dark:text-amber-300 px-4 py-3 text-sm font-medium">
             This mess is currently full. Increase the member limit in settings to invite more.
           </div>
         )}

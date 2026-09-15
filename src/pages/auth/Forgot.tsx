@@ -30,7 +30,7 @@ export function Forgot() {
       title="Reset password"
       subtitle="We'll email you a link to set a new password."
       footer={
-        <Link to="/login" className="inline-flex items-center gap-1.5 font-semibold text-brand-300 hover:underline">
+        <Link to="/login" className="inline-flex items-center gap-1.5 font-semibold text-brand-700 dark:text-brand-300 hover:underline">
           <ArrowLeft className="w-4 h-4" /> Back to sign in
         </Link>
       }

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Settings as SettingsIcon, User, Lock, Bell, Home, SlidersHorizontal, Split, Trash2, Save, Users, ChevronRight } from 'lucide-react'
+import { Settings as SettingsIcon, User, Lock, Bell, Home, SlidersHorizontal, Split, Trash2, Save, Users, ChevronRight, Palette, Sun, Moon } from 'lucide-react'
 import { PageHeader } from '@/components/common/PageHeader'
 import { Card, SectionTitle, Field, Input, Button, Segmented, Stepper, Avatar } from '@/components/ui'
 import { useUser, useMess, useCan, useCurrentMember } from '@/hooks/useMess'
@@ -34,6 +34,7 @@ export function Settings() {
 
       <ProfileCard />
       <PasswordCard />
+      <AppearanceCard />
       <NotifCard />
 
       {mess && (canEditInfo || canSettings) && (
@@ -46,7 +47,7 @@ export function Settings() {
 
       <Card hover className="p-4">
         <button onClick={() => navigate('/app/members')} className="w-full flex items-center gap-3 text-left">
-          <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-brand-500 to-violet-500 grid place-items-center text-white shrink-0"><Users className="w-5 h-5" /></div>
+          <div className="w-10 h-10 rounded-2xl grad-brand grid place-items-center text-white shrink-0"><Users className="w-5 h-5" /></div>
           <div className="flex-1">
             <p className="font-semibold text-ink-900">Members & roles</p>
             <p className="text-sm text-ink-500">Invite, assign managers, transfer ownership</p>
@@ -158,6 +159,30 @@ function PasswordCard() {
   )
 }
 
+function AppearanceCard() {
+  const theme = useUI((s) => s.theme)
+  const setTheme = useUI((s) => s.setTheme)
+  return (
+    <Card className="p-5">
+      <SectionTitle title="Appearance" subtitle="Pick a look — your device remembers it" icon={<Palette className="w-5 h-5" />} />
+      <div className="flex items-center justify-between gap-3 flex-wrap">
+        <div>
+          <p className="font-medium text-ink-800">Theme</p>
+          <p className="text-sm text-ink-500">Warm light or the classic dark glass</p>
+        </div>
+        <Segmented
+          value={theme}
+          onChange={setTheme}
+          options={[
+            { value: 'light', label: 'Light', icon: <Sun className="w-4 h-4" /> },
+            { value: 'dark', label: 'Dark', icon: <Moon className="w-4 h-4" /> },
+          ]}
+        />
+      </div>
+    </Card>
+  )
+}
+
 function NotifCard() {
   const user = useUser()
   const updateNotifPrefs = useStore((s) => s.updateNotifPrefs)
@@ -212,13 +237,13 @@ function DeviceNotifRow() {
     : 'Get alerts even when the app is closed'
 
   return (
-    <div className="flex items-center justify-between gap-3 py-2.5 mb-1 border-b border-white/[0.06]">
+    <div className="flex items-center justify-between gap-3 py-2.5 mb-1 border-b border-line/[0.06]">
       <div>
         <p className="font-medium text-ink-800">Device notifications</p>
         <p className="text-sm text-ink-500">{desc}</p>
       </div>
       {perm === 'granted' ? (
-        <span className="text-sm font-semibold text-emerald-400 shrink-0">On</span>
+        <span className="text-sm font-semibold text-emerald-700 dark:text-emerald-400 shrink-0">On</span>
       ) : perm === 'default' ? (
         <Button variant="secondary" onClick={enable}>Enable</Button>
       ) : (
@@ -316,7 +341,7 @@ function CategorySplitCard() {
     <Card className="p-5">
       <SectionTitle title="Expense split rules" subtitle="Default split for each category" icon={<Split className="w-5 h-5" />} />
       <p className="text-sm text-ink-500 mb-4">
-        <span className="font-semibold text-brand-300">Meal-based</span> costs are shared by meals eaten (added to the meal rate). <span className="font-semibold text-ink-700">Equal</span> costs are split evenly among members.
+        <span className="font-semibold text-brand-700 dark:text-brand-300">Meal-based</span> costs are shared by meals eaten (added to the meal rate). <span className="font-semibold text-ink-700">Equal</span> costs are split evenly among members.
       </p>
       <div className="space-y-1.5">
         {EXPENSE_CATEGORIES.map((c) => (
@@ -341,7 +366,7 @@ function Switch({ checked, onChange }: { checked: boolean; onChange: (v: boolean
   return (
     <button
       onClick={() => onChange(!checked)}
-      className={cn('relative w-12 h-7 rounded-full transition-colors shrink-0', checked ? 'bg-gradient-to-br from-brand-500 to-violet-500' : 'bg-ink-300')}
+      className={cn('relative w-12 h-7 rounded-full transition-colors shrink-0', checked ? 'grad-brand' : 'bg-ink-300')}
       role="switch"
       aria-checked={checked}
     >

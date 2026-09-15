@@ -31,7 +31,7 @@ export function Field({ label, hint, error, required, children, className }: Fie
       )}
       {children}
       {error ? (
-        <p className="mt-1.5 text-xs font-medium text-rose-400">{error}</p>
+        <p className="mt-1.5 text-xs font-medium text-rose-700 dark:text-rose-400">{error}</p>
       ) : hint ? (
         <p className="mt-1.5 text-xs text-ink-500">{hint}</p>
       ) : null}
@@ -84,7 +84,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(function Select
     <div className="relative">
       <select
         ref={ref}
-        className={cn(fieldBase, 'appearance-none pr-10 cursor-pointer bg-white/[0.08]', className)}
+        className={cn(fieldBase, 'appearance-none pr-10 cursor-pointer bg-overlay/[0.08]', className)}
         {...rest}
       >
         {options.map((o) => (

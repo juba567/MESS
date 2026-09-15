@@ -80,12 +80,12 @@ export function Calendar() {
                 onClick={() => setOpenDate(date)}
                 className={cn(
                   'aspect-square rounded-2xl border flex flex-col items-center justify-center gap-1 transition relative p-1',
-                  d?.meals ? 'bg-gradient-to-br from-brand-500/12 to-violet-500/8 border-brand-300/50' : 'bg-white/[0.05] border-white/[0.10] hover:bg-white/[0.09]',
+                  d?.meals ? 'bg-gradient-to-br from-brand-500/12 to-brand-600/8 dark:to-violet-500/8 border-brand-300/50' : 'bg-overlay/[0.05] border-line/[0.10] hover:bg-overlay/[0.09]',
                   isToday && 'ring-2 ring-brand-500/60',
                   isFuture && 'opacity-60',
                 )}
               >
-                <span className={cn('text-[11px] font-semibold', isToday ? 'text-brand-300' : 'text-ink-500')}>{parseInt(date.slice(-2))}</span>
+                <span className={cn('text-[11px] font-semibold', isToday ? 'text-brand-700 dark:text-brand-300' : 'text-ink-500')}>{parseInt(date.slice(-2))}</span>
                 {d?.meals ? <span className="font-display font-extrabold text-ink-900 text-sm leading-none">{d.meals}</span> : null}
                 <span className="flex gap-0.5 h-1.5">
                   {d?.meals ? <span className="w-1.5 h-1.5 rounded-full bg-brand-500" /> : null}
@@ -147,7 +147,7 @@ function DayDetail({ date, onClose, members }: { date: string | null; onClose: (
             <Section icon={<Palmtree className="w-4 h-4" />} title="On leave">
               <div className="flex flex-wrap gap-2">
                 {data.onLeave.map((l) => (
-                  <span key={l.id} className="inline-flex items-center gap-1.5 bg-amber-500/10 text-amber-300 rounded-full pl-1 pr-3 py-1 text-sm font-medium">
+                  <span key={l.id} className="inline-flex items-center gap-1.5 bg-amber-500/10 text-amber-700 dark:text-amber-300 rounded-full pl-1 pr-3 py-1 text-sm font-medium">
                     <Avatar name={nameOf(l.memberId)?.name ?? '—'} color={nameOf(l.memberId)?.avatarColor} size="xs" />
                     {nameOf(l.memberId)?.name}
                   </span>

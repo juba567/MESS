@@ -14,7 +14,7 @@ export function Sidebar() {
       <div className="glass-strong rounded-4xl flex-1 flex flex-col p-4 shadow-glass">
         {/* Brand */}
         <div className="flex items-center gap-3 px-2 py-2">
-          <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-brand-500 to-violet-500 grid place-items-center text-white shadow-glow">
+          <div className="w-10 h-10 rounded-2xl grad-brand grid place-items-center text-white shadow-glow">
             <Sparkles className="w-5 h-5" />
           </div>
           <div className="min-w-0">
@@ -40,15 +40,15 @@ export function Sidebar() {
                 cn(
                   'flex items-center gap-3 px-3.5 py-2.5 rounded-2xl text-sm font-semibold transition-all group',
                   isActive
-                    ? 'bg-gradient-to-r from-brand-500/15 to-violet-500/10 text-brand-300'
-                    : 'text-ink-600 hover:bg-white/[0.08]',
+                    ? 'bg-gradient-to-r from-brand-500/15 to-brand-600/10 dark:to-violet-500/10 text-brand-700 dark:text-brand-300'
+                    : 'text-ink-600 hover:bg-overlay/[0.08]',
                 )
               }
             >
               {({ isActive }) => (
                 <>
                   <item.icon
-                    className={cn('w-[18px] h-[18px] transition', isActive ? 'text-brand-400' : 'text-ink-400 group-hover:text-ink-600')}
+                    className={cn('w-[18px] h-[18px] transition', isActive ? 'text-brand-600 dark:text-brand-400' : 'text-ink-400 group-hover:text-ink-600')}
                   />
                   {item.label}
                 </>
@@ -57,7 +57,7 @@ export function Sidebar() {
           ))}
         </nav>
 
-        <div className="pt-3 mt-2 border-t border-white/[0.10] px-2">
+        <div className="pt-3 mt-2 border-t border-line/[0.10] px-2">
           <p className="text-[11px] text-ink-400">Mess code</p>
           <p className="font-mono font-bold tracking-widest text-ink-800">{mess?.code ?? '—'}</p>
         </div>

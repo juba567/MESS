@@ -44,7 +44,7 @@ export function ResetPassword() {
       title="Set a new password"
       subtitle="Choose a new password for your account."
       footer={
-        <Link to="/login" className="inline-flex items-center gap-1.5 font-semibold text-brand-300 hover:underline">
+        <Link to="/login" className="inline-flex items-center gap-1.5 font-semibold text-brand-700 dark:text-brand-300 hover:underline">
           <ArrowLeft className="w-4 h-4" /> Back to sign in
         </Link>
       }

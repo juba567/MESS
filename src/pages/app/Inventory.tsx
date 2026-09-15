@@ -85,14 +85,14 @@ export function Inventory() {
                 </div>
                 {canManage && (
                   <div className="flex items-center gap-1.5 shrink-0">
-                    <div className="inline-flex items-center rounded-2xl border border-white/[0.10] bg-white/[0.06]">
-                      <button onClick={() => adjustStock(i.id, -1)} disabled={i.stock <= 0} className="w-9 h-9 grid place-items-center rounded-l-2xl text-ink-500 hover:bg-white/[0.09] disabled:opacity-30 transition"><Minus className="w-4 h-4" /></button>
+                    <div className="inline-flex items-center rounded-2xl border border-line/[0.10] bg-overlay/[0.06]">
+                      <button onClick={() => adjustStock(i.id, -1)} disabled={i.stock <= 0} className="w-9 h-9 grid place-items-center rounded-l-2xl text-ink-500 hover:bg-overlay/[0.09] disabled:opacity-30 transition"><Minus className="w-4 h-4" /></button>
                       <span className="w-10 text-center font-bold tabular-nums text-ink-800">{i.stock}</span>
-                      <button onClick={() => adjustStock(i.id, 1)} className="w-9 h-9 grid place-items-center rounded-r-2xl text-ink-500 hover:bg-white/[0.09] transition"><Plus className="w-4 h-4" /></button>
+                      <button onClick={() => adjustStock(i.id, 1)} className="w-9 h-9 grid place-items-center rounded-r-2xl text-ink-500 hover:bg-overlay/[0.09] transition"><Plus className="w-4 h-4" /></button>
                     </div>
                     <Menu
                       trigger={({ toggle }) => (
-                        <button onClick={toggle} className="w-8 h-8 grid place-items-center rounded-xl text-ink-400 hover:bg-white/[0.09] transition">⋯</button>
+                        <button onClick={toggle} className="w-8 h-8 grid place-items-center rounded-xl text-ink-400 hover:bg-overlay/[0.09] transition">⋯</button>
                       )}
                     >
                       {(close) => (

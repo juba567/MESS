@@ -79,7 +79,7 @@ export function Leave() {
         <>
           {current.length > 0 && (
             <section className="space-y-2.5">
-              <p className="text-xs font-semibold uppercase tracking-wide text-amber-400 flex items-center gap-1.5"><CalendarDays className="w-3.5 h-3.5" /> Away right now</p>
+              <p className="text-xs font-semibold uppercase tracking-wide text-amber-700 dark:text-amber-400 flex items-center gap-1.5"><CalendarDays className="w-3.5 h-3.5" /> Away right now</p>
               {current.map((l) => <Row key={l.id} l={l} tone="amber" />)}
             </section>
           )}

@@ -49,12 +49,12 @@ export function Settlements() {
         <Stat label="Collected" value={taka(summary?.totalCollected ?? 0)} sub={`of ${taka(summary?.totalCost ?? 0)}`} icon={<PiggyBank className="w-5 h-5" />} tone="sky" />
       </div>
 
-      <Card className="p-5 bg-gradient-to-br from-brand-500/8 to-violet-500/8">
+      <Card className="p-5 bg-gradient-to-br from-brand-500/8 to-brand-600/8 dark:to-violet-500/8">
         <div className="flex items-start gap-3">
-          <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-brand-500 to-violet-500 grid place-items-center text-white shrink-0"><Sparkles className="w-5 h-5" /></div>
+          <div className="w-10 h-10 rounded-2xl grad-brand grid place-items-center text-white shrink-0"><Sparkles className="w-5 h-5" /></div>
           <div>
             <p className="font-semibold text-ink-800">Smart settlement</p>
-            <p className="text-sm text-ink-500 mt-0.5">These are the fewest transfers that clear everyone's balance for {monthLabel(month)}. Payments to or from the <span className="font-semibold text-emerald-300">{FUND_NAME}</span> cover the gap between what was collected and spent.</p>
+            <p className="text-sm text-ink-500 mt-0.5">These are the fewest transfers that clear everyone's balance for {monthLabel(month)}. Payments to or from the <span className="font-semibold text-emerald-700 dark:text-emerald-300">{FUND_NAME}</span> cover the gap between what was collected and spent.</p>
           </div>
         </div>
       </Card>
@@ -91,12 +91,12 @@ export function Settlements() {
                     {to.fund ? <FundBadge /> : <Avatar name={to.name} color={to.color} size="sm" />}
                   </div>
                 </div>
-                <div className="mt-3 pt-3 border-t border-white/[0.10] flex items-center justify-between">
+                <div className="mt-3 pt-3 border-t border-line/[0.10] flex items-center justify-between">
                   {settled ? <Badge tone="green" dot>Settled</Badge> : <Badge tone="amber" dot>Pending</Badge>}
                   {canManage ? (
                     <button
                       onClick={() => { toggleSettlement({ month, fromId: t.fromId, toId: t.toId, amount: t.amount, settled: !settled }); toast(settled ? 'Marked pending' : 'Marked as settled') }}
-                      className={cn('inline-flex items-center gap-1.5 text-sm font-semibold transition', settled ? 'text-ink-400 hover:text-ink-600' : 'text-emerald-400 hover:text-emerald-300')}
+                      className={cn('inline-flex items-center gap-1.5 text-sm font-semibold transition', settled ? 'text-ink-400 hover:text-ink-600' : 'text-emerald-700 hover:text-emerald-800 dark:text-emerald-400 dark:hover:text-emerald-300')}
                     >
                       {settled ? <><Circle className="w-4 h-4" /> Undo</> : <><CheckCircle2 className="w-4 h-4" /> Mark settled</>}
                     </button>
@@ -115,7 +115,7 @@ export function Settlements() {
 
 function FundBadge() {
   return (
-    <div className="w-9 h-9 rounded-full bg-gradient-to-br from-emerald-500 to-teal-500 grid place-items-center text-white shrink-0 ring-2 ring-white/[0.18]">
+    <div className="w-9 h-9 rounded-full bg-gradient-to-br from-emerald-500 to-teal-500 grid place-items-center text-white shrink-0 ring-2 ring-line/[0.18]">
       <PiggyBank className="w-4 h-4" />
     </div>
   )

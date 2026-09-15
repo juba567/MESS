@@ -65,7 +65,7 @@ export function Notifications() {
               <button
                 key={n.id}
                 onClick={() => !n.read && markNotifRead(n.id)}
-                className={cn('w-full text-left rounded-2xl p-3.5 flex items-center gap-3 transition border', n.read ? 'bg-white/[0.05] border-white/[0.10]' : 'glass-strong border-brand-200/60')}
+                className={cn('w-full text-left rounded-2xl p-3.5 flex items-center gap-3 transition border', n.read ? 'bg-overlay/[0.05] border-line/[0.10]' : 'glass-strong border-brand-200/60')}
               >
                 <div className={cn('w-10 h-10 rounded-2xl grid place-items-center text-white shrink-0 bg-gradient-to-br', k.tone)}>{k.icon}</div>
                 <div className="flex-1 min-w-0">
