@@ -9,6 +9,7 @@ import { useStore } from '@/lib/store'
 import { taka } from '@/lib/format'
 import { monthLabel } from '@/lib/date'
 import { toCSV, download } from '@/lib/csv'
+import { printMonthReport } from '@/lib/report-doc'
 import { cn } from '@/lib/cn'
 import { useMemo } from 'react'
 
@@ -61,7 +62,7 @@ export function Reports() {
           {(close) => (
             <>
               <MenuItem icon={<Download className="w-4 h-4" />} onClick={() => { exportCSV(); close() }}>Download CSV</MenuItem>
-              <MenuItem icon={<Printer className="w-4 h-4" />} onClick={() => { close(); setTimeout(() => window.print(), 100) }}>Print / Save PDF</MenuItem>
+              <MenuItem icon={<Printer className="w-4 h-4" />} onClick={() => { close(); printMonthReport({ messName: mess?.name ?? 'Mess', messCode: mess?.code, month, summary }) }}>Print / Save PDF</MenuItem>
             </>
           )}
         </Menu>
