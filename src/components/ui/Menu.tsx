@@ -1,6 +1,17 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { cn } from '@/lib/cn'
+
+const GAP = 8 // breathing room between the trigger and the menu
+const EDGE = 8 // keep the menu clear of the viewport edges
+
+interface Placement {
+  top: number
+  left: number
+  maxHeight: number
+  origin: string
+}
 
 export function Menu({
   trigger,
@@ -14,42 +25,105 @@ export function Menu({
   width?: string
 }) {
   const [open, setOpen] = useState(false)
+  const [place, setPlace] = useState<Placement | null>(null)
   const ref = useRef<HTMLDivElement>(null)
+  const menuRef = useRef<HTMLDivElement>(null)
+
+  // The menu is portalled to <body> and placed in viewport coordinates because
+  // every card is its own stacking context — `.glass*` sets backdrop-filter — so
+  // an absolutely positioned dropdown nested in one card paints *underneath* the
+  // next card however high its z-index is. Going through the portal also frees it
+  // from any `overflow: hidden` ancestor.
+  const position = useCallback(() => {
+    const t = ref.current?.getBoundingClientRect()
+    const m = menuRef.current
+    if (!t || !m) return
+
+    const vw = window.innerWidth
+    const vh = window.innerHeight
+    const below = vh - t.bottom - GAP - EDGE
+    const above = t.top - GAP - EDGE
+    // Drop upwards only when the menu genuinely doesn't fit below and fits better above.
+    const flip = m.offsetHeight > below && above > below
+
+    const wanted = align === 'right' ? t.right - m.offsetWidth : t.left
+    setPlace({
+      top: flip ? Math.max(EDGE, t.top - GAP - m.offsetHeight) : t.bottom + GAP,
+      left: Math.min(Math.max(EDGE, wanted), Math.max(EDGE, vw - m.offsetWidth - EDGE)),
+      maxHeight: Math.max(120, flip ? above : below),
+      origin: `${flip ? 'bottom' : 'top'} ${align}`,
+    })
+  }, [align])
+
+  // Measure before paint so the menu never flashes at a stale position. The last
+  // placement is kept on close so the exit animation plays where it opened.
+  useLayoutEffect(() => {
+    if (open) position()
+  }, [open, position])
 
   useEffect(() => {
     if (!open) return
-    const onClick = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false)
+    const onDown = (e: MouseEvent) => {
+      const target = e.target as Node
+      if (ref.current?.contains(target) || menuRef.current?.contains(target)) return
+      setOpen(false)
     }
     const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setOpen(false)
-    document.addEventListener('mousedown', onClick)
-    document.addEventListener('keydown', onKey)
-    return () => {
-      document.removeEventListener('mousedown', onClick)
-      document.removeEventListener('keydown', onKey)
+
+    // Follow the trigger while the page scrolls — capture, so scrolling containers
+    // count too; one recompute per frame at most.
+    let raf = 0
+    const follow = () => {
+      if (raf) return
+      raf = requestAnimationFrame(() => {
+        raf = 0
+        position()
+      })
     }
-  }, [open])
+
+    document.addEventListener('mousedown', onDown)
+    document.addEventListener('keydown', onKey)
+    window.addEventListener('scroll', follow, true)
+    window.addEventListener('resize', follow)
+    return () => {
+      if (raf) cancelAnimationFrame(raf)
+      document.removeEventListener('mousedown', onDown)
+      document.removeEventListener('keydown', onKey)
+      window.removeEventListener('scroll', follow, true)
+      window.removeEventListener('resize', follow)
+    }
+  }, [open, position])
 
   return (
     <div className="relative" ref={ref}>
       {trigger({ open, toggle: () => setOpen((v) => !v) })}
-      <AnimatePresence>
-        {open && (
-          <motion.div
-            initial={{ opacity: 0, y: -8, scale: 0.97 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -8, scale: 0.97 }}
-            transition={{ duration: 0.15 }}
-            className={cn(
-              'absolute z-50 mt-2 glass-strong rounded-2xl shadow-glass-lg p-1.5 overflow-hidden',
-              width,
-              align === 'right' ? 'right-0' : 'left-0',
-            )}
-          >
-            {children(() => setOpen(false))}
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {createPortal(
+        <AnimatePresence>
+          {open && (
+            <motion.div
+              ref={menuRef}
+              initial={{ opacity: 0, y: -8, scale: 0.97 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -8, scale: 0.97 }}
+              transition={{ duration: 0.15 }}
+              style={{
+                top: place?.top ?? 0,
+                left: place?.left ?? 0,
+                maxHeight: place?.maxHeight,
+                transformOrigin: place?.origin,
+                visibility: place ? 'visible' : 'hidden',
+              }}
+              className={cn(
+                'fixed z-50 glass-strong rounded-2xl shadow-glass-lg p-1.5 overflow-y-auto overscroll-contain',
+                width,
+              )}
+            >
+              {children(() => setOpen(false))}
+            </motion.div>
+          )}
+        </AnimatePresence>,
+        document.body,
+      )}
     </div>
   )
 }
