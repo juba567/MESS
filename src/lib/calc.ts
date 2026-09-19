@@ -49,16 +49,23 @@ export function effectiveSplit(mess: Mess, e: Expense): SplitMethod {
 }
 
 /**
- * Opt-out meal model: lunch + dinner are ON by default for every day a member
- * belongs to the mess. `isMealDay` answers "could this member have a meal on
- * this date" — i.e. the date is on/after the mess start and the member's join,
- * and on/before their leave date. It does NOT cap at "today"; callers that
- * compute billable totals additionally require `date <= today`, while the
- * meal editor also shows future days so upcoming meals can be pre-cancelled.
+ * Opt-out meal model: lunch + dinner are ON by default for every day the mess is
+ * running. `isMealDay` answers "could this member have a meal on this date" —
+ * i.e. the date is on/after the mess start and on/before their leave date.
+ *
+ * Deliberately NOT gated by `joinedAt`. That timestamp records when a member was
+ * typed into the app, not when they started eating, so gating on it sealed off
+ * every earlier day of the month: someone added on the 19th could never have the
+ * first half of the month recorded, and neither could a mess entered into the app
+ * mid-month. Who ate before that is the manager's call, so every day stays open
+ * and the manager switches off the ones that didn't happen.
+ *
+ * It does NOT cap at "today"; callers that compute billable totals additionally
+ * require `date <= today`, while the meal editor also shows future days so
+ * upcoming meals can be pre-cancelled.
  */
 export function isMealDay(mess: Mess, member: Member, date: ISODate): boolean {
   if (date < mess.startDate) return false
-  if (date < member.joinedAt.slice(0, 10)) return false
   if (!member.active && member.leftAt && date > member.leftAt.slice(0, 10)) return false
   return true
 }
@@ -121,8 +128,8 @@ export function computeMonth(db: Database, messId: ID, month: Month): MonthSumma
 
   // --- meal totals (opt-out model) ---
   // A stored meal row is an OVERRIDE for that member/day: lunch/dinner 1 = eating,
-  // 0 = cancelled. With no row, both default ON for every day the member belongs
-  // to the mess. Only elapsed days (through today) are billable.
+  // 0 = cancelled. With no row, both default ON for every day the mess was
+  // running. Only elapsed days (through today) are billable.
   const today = todayISO()
   const monthEnd = `${month}-${String(daysInMonth(month)).padStart(2, '0')}`
   const countableEnd = today < monthEnd ? today : monthEnd

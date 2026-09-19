@@ -27,7 +27,7 @@ export function Calendar() {
     const bump = (d: string) => (map[d] ??= { meals: 0, bazar: 0, expense: 0 })
     if (mess) {
       // Virtualized opt-out meals: lunch & dinner count automatically for every day
-      // a member belongs to the mess (through today), unless a stored row cancels a slot.
+      // the mess is running (through today), unless a stored row cancels a slot.
       const today = todayISO()
       const override: Record<string, { l: number; d: number }> = {}
       mealsAll

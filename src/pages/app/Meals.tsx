@@ -35,8 +35,9 @@ export function Meals() {
 
   const memberMeals = useMemo(() => {
     // Effective per-day state for the selected member under the opt-out model:
-    // lunch & dinner default ON for every day they belong to the mess, unless a
-    // stored row cancels one. Days outside their membership are omitted.
+    // lunch & dinner default ON for every day the mess is running, unless a
+    // stored row cancels one. Days before the mess started (or after the member
+    // left) are omitted; joining mid-month does not close off earlier days.
     const map: Record<string, { l: number; d: number }> = {}
     const selMember = members.find((m) => m.id === selId)
     if (!selMember || !mess) return map
@@ -108,7 +109,7 @@ export function Meals() {
             const isToday = date === today
             const isFuture = date > today
             if (!mm) {
-              // Selected member wasn't part of the mess on this day.
+              // Before the mess started, or after this member left.
               return (
                 <div key={date} className="aspect-square rounded-2xl border border-line/[0.05] bg-overlay/[0.02] flex items-center justify-center opacity-30">
                   <span className="text-xs font-semibold text-ink-500">{parseInt(date.slice(-2))}</span>
